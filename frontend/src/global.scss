@@ -1,0 +1,53 @@
+
+ion-content { --padding-bottom: 56px; } 
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;   /* ← clave */
+}
+
+ion-footer { position: fixed; bottom: 0; left: 0; right: 0; }
+
+.ion-page.ion-page-hidden {
+  display: none !important;
+}
+
+body, ion-app { font-family: 'Montserrat', sans-serif; }
+ion-title { font-weight: 600;  }
+
+ion-app, ion-content {
+  background-color: var(--ion-background-color) !important;
+}
+
+/* Toolbar oscuro */
+ion-toolbar {
+  background: var(--ion-toolbar-background) !important;
+  color: var(--ion-text-color) !important;
+}
+
+/* Tab-bar oscuro */
+ion-tab-bar {
+  background: var(--ion-tab-bar-background) !important;
+  border-top: 1px solid var(--ion-item-border-color);
+}
+
+/* Items en lista */
+ion-item {
+  --background: var(--ion-item-background);
+  --border-color: var(--ion-item-border-color);
+  color: var(--ion-text-color);
+}
+
+/* Inputs, textareas, toggles, botones outline */
+ion-toggle, ion-input, ion-textarea, ion-button[fill="outline"] {
+  color: var(--ion-text-color);
+  --background: var(--ion-item-background);
+  --border-color: var(--ion-item-border-color);
+}
+
+/* Sombra de “cards” */
+.card, .profile-list-card {
+  box-shadow: var(--ion-box-shadow-sharp);
+  background: var(--ion-item-background);
+}
+

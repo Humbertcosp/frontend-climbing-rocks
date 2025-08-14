@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Idioma</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="lang-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Selecciona tu idioma</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-radio-group
+          [value]="selected"
+          (ionChange)="onChange($event)">
+
+          <ion-list lines="full">
+            <ion-item *ngFor="let opt of options" button detail="false">
+              <ion-label>{{ opt.label }}</ion-label>
+              <ion-radio slot="end" [value]="opt.code"></ion-radio>
+            </ion-item>
+          </ion-list>
+
+        </ion-radio-group>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+</ion-content>

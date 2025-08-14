@@ -1,0 +1,77 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/chats"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="chat-header">
+        <ion-avatar class="chat-header-avatar">
+          <img [src]="chatAvatarUrl" />
+        </ion-avatar>
+        <div class="chat-header-text">
+          <div class="chat-header-title">{{ chatTitle }}</div>
+          <div class="chat-header-subtitle">
+            {{ participantsCount }} participantes
+          </div>
+        </div>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openGroupInfo()">
+        <ion-icon slot="icon-only" name="information-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="messages">
+    <ng-container *ngFor="let block of groupMessagesByDate(messages)">
+      <div class="date-sep">{{ block.dateLabel }}</div>
+      <ng-container *ngFor="let msg of block.msgs">
+        <div class="message" [ngClass]="msg.from">
+          <p class="text">{{ msg.text }}</p>
+          <span class="ts">{{ msg.timestamp | date:'shortTime' }}</span>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <div *ngIf="typing" class="typing-indicator">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar class="ion-no-border">
+    <!-- Picker de iconos -->
+    <div *ngIf="showIcons" class="icon-picker">
+      <button *ngFor="let icon of icons" (click)="insertIcon(icon)">
+        {{ icon }}
+      </button>
+    </div>
+
+    <ion-item lines="none" class="chat-input-item">
+      <!-- Botón para abrir el picker -->
+      <ion-button fill="clear" slot="start" (click)="toggleIcons()">
+        <ion-icon name="happy-outline"></ion-icon>
+      </ion-button>
+      <!-- Caja de texto blanca -->
+      <ion-textarea
+        [(ngModel)]="newText"
+        placeholder="Escribe un mensaje…"
+        rows="1"
+        auto-grow="true">
+      </ion-textarea>
+      <ion-button
+        fill="clear"
+        slot="end"
+        (click)="send()"
+        [disabled]="!newText.trim()">
+        <ion-icon name="send"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

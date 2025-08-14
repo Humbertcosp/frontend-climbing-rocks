@@ -1,0 +1,41 @@
+/* Centrar y limitar ancho */
+.help-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+ion-accordion-group {
+  width: 100%;
+  max-width: 500px;      /* no demasiado ancho en tablets */
+}
+
+/* Estilo general de cada acordeón */
+ion-accordion {
+  margin-bottom: 12px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--ion-box-shadow-sharp);
+  background: var(--ion-item-background);
+}
+
+/* Encabezado de la pregunta */
+ion-accordion ion-item[slot="header"] {
+  --background: transparent;
+  --inner-padding-start: 16px;
+  --inner-padding-end: 16px;
+  font-weight: 600;
+}
+
+/* Icono y texto de la pregunta */
+ion-accordion ion-item[slot="header"] ion-label {
+  margin-left: 8px;
+}
+
+/* Contenido (respuesta) */
+ion-accordion div[slot="content"] {
+  padding: 12px 16px;
+  color: var(--ion-text-color);
+  background: var(--ion-item-background);
+  line-height: 1.4;
+}

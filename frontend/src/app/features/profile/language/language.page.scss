@@ -1,0 +1,25 @@
+.lang-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+ion-card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 12px;
+  --box-shadow: var(--ion-box-shadow-sharp);
+}
+
+ion-card-header {
+  padding-bottom: 0;
+}
+
+ion-list {
+  margin-top: 8px;
+}
+
+ion-item {
+  --inner-padding-start: 16px;
+  --inner-padding-end: 16px;
+}

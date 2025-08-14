@@ -1,0 +1,114 @@
+<ion-header collapse="condense" translucent>
+  <!-- Toolbar principal -->
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/sectores"></ion-back-button>
+    </ion-buttons>
+    <ion-title size="medium">{{ sector?.nombre }}</ion-title>
+  </ion-toolbar>
+
+  <!-- Toolbar con imagen para efecto parallax -->
+  <ion-toolbar class="parallax-toolbar">
+    <div class="parallax-bg">
+      <ion-img [src]="sector?.imageUrl"></ion-img>
+      <div class="overlay"></div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content [class.scrolled]="scrolled">
+  <!-- Contenedor que muestra el contenido solo cuando sector existe -->
+  <ng-container *ngIf="sector; else cargando">
+    <!-- —— Segmento centrado —— -->
+    <div class="segment-wrapper">
+      <ion-segment
+        [(ngModel)]="tab"
+        scrollable="false"
+        mode="md"
+        class="info-segment"
+      >
+        <ion-segment-button value="info">
+          <ion-label>Info</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="rutas">
+          <ion-label>Vías</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+
+    <!-- —— PESTAÑA INFO —— -->
+    <ng-container *ngIf="tab === 'info'">
+      <ion-list lines="full">
+        <ion-list-header>
+          <ion-label>Información</ion-label>
+        </ion-list-header>
+        <ion-item>
+          <ion-icon name="sunny-outline" slot="start"></ion-icon>
+          <ion-label>Orientación</ion-label>
+          <ion-note slot="end">{{ sector.orientacion }}</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="layers-outline" slot="start"></ion-icon>
+          <ion-label>Tipo de roca</ion-label>
+          <ion-note slot="end">{{ sector.tipoRoca }}</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="albums-outline" slot="start"></ion-icon>
+          <ion-label>Vías</ion-label>
+          <ion-note slot="end">{{ sector.vias.length }}</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="resize-outline" slot="start"></ion-icon>
+          <ion-label>Altura</ion-label>
+          <ion-note slot="end"
+            >{{ sector.minAltura }}–{{ sector.maxAltura }} m</ion-note
+          >
+        </ion-item>
+        <ion-item *ngIf="sector.mesesBuenos?.length">
+          <ion-icon name="calendar-outline" slot="start"></ion-icon>
+          <ion-label>Meses buenos</ion-label>
+          <ion-note slot="end">
+            <ion-chip *ngFor="let m of sector.mesesBuenos" size="small"
+              >{{ m }}</ion-chip
+            >
+          </ion-note>
+        </ion-item>
+        <ion-item *ngIf="weather">
+          <ion-icon name="thermometer-outline" slot="start"></ion-icon>
+          <ion-label>Temperatura</ion-label>
+          <ion-note slot="end">{{ weather.temp | number:'1.0-0' }}°C</ion-note>
+        </ion-item>
+        <!-- Tiempo andando desde el parking -->
+        <ion-item *ngIf="walkTime !== undefined">
+          <ion-icon name="walk-outline" slot="start"></ion-icon>
+          <ion-label>Desde parking</ion-label>
+          <ion-note slot="end">{{ walkTime }} min</ion-note>
+        </ion-item>
+      </ion-list>
+    </ng-container>
+
+    <!-- ——  Vías (solo lectura) —— -->
+    <ng-container *ngIf="tab === 'rutas'">
+      <ion-list lines="full">
+        <ion-list-header>
+          <ion-label>Listado de vías</ion-label>
+        </ion-list-header>
+
+        <!-- Cada item ya no es clicable ni muestra flecha -->
+        <ion-item *ngFor="let v of sector.vias" lines="full" detail="false">
+          <ion-label>
+            <h3>{{ v.nombre }}</h3>
+            <p>{{ v.grado }} · {{ v.altura }} m</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ng-container>
+  </ng-container>
+
+  <!-- Spinner mientras cargan los datos -->
+  <ng-template #cargando>
+    <div class="ion-padding">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  </ng-template>
+</ion-content>

@@ -1,0 +1,137 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/quedadas"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ quedada?.titulo }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="quedada; else loading" class="ion-padding">
+
+ <!-- Tarjeta flotante de detalle -->
+  <ion-card class="detail-card">
+    <ion-card-header>
+      <ion-card-subtitle>
+        <ion-icon name="calendar-outline"></ion-icon>
+        {{ quedada.fecha | date:'EEEE, MMMM d, yyyy' }} • {{ quedada.hora }}
+      </ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <!-- Badges con meta‑info -->
+      <div class="meta-badges">
+        <ion-badge color="tertiary">
+          <ion-icon name="calendar-outline"></ion-icon>
+          {{ quedada.fecha | date:'shortDate' }}
+        </ion-badge>
+        <ion-badge color="secondary">
+          <ion-icon name="time-outline"></ion-icon>
+          {{ quedada.hora }}
+        </ion-badge>
+        <ion-badge color="warning">
+          <ion-icon name="location-outline"></ion-icon>
+          {{ quedada.sectorNombre }}
+        </ion-badge>
+        <ion-badge color="success">
+          <ion-icon name="people-outline"></ion-icon>
+          {{ quedada.asistentes.length }} participantes
+        </ion-badge>
+      </div>
+
+      <!-- Descripción -->
+      <p class="description">{{ quedada.descripcion }}</p>
+
+      <!-- Checklist “Lo que necesitas” -->
+      <ion-list lines="none" class="checklist">
+        <ion-list-header>
+          <ion-label>Información</ion-label>
+        </ion-list-header>
+        <ion-item>
+          <ion-icon slot="start" name="warning-outline"></ion-icon>
+          <ion-label>Arnés,casco,cintas express</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="sunny-outline"></ion-icon>
+          <ion-label>Sol desde las 14h hasta las 21h</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="walk-outline"></ion-icon>
+          <ion-label>15 min caminando desde el parking mas cercano</ion-label>
+        </ion-item>
+         <ion-item>
+          <ion-icon slot="start" name="paw-outline"></ion-icon>
+          <ion-label> {{quedada.mascotas}}</ion-label>
+        </ion-item>
+      </ion-list>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Avatar del creador -->
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Creador</ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-avatar slot="start">
+        <img
+          [src]="quedada.asistentes[0].avatarUrl || 'assets/img/avatar-placeholder.png'"
+        />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ quedada.asistentes[0].nombre }}</h2>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- Avatares de participantes -->
+  <div class="avatars-group">
+    <ng-container *ngFor="let u of quedada.asistentes.slice(0,5); let i = index">
+      <ion-avatar class="small-avatar" [style.zIndex]="10 - i">
+        <img
+          [src]="u.avatarUrl || 'assets/img/avatar-placeholder.png'"
+        />
+      </ion-avatar>
+    </ng-container>
+    <div
+      *ngIf="quedada.asistentes.length > 5"
+      class="more-avatar">
+      +{{ quedada.asistentes.length - 5 }}
+    </div>
+  </div>
+
+</ion-content>
+
+<!-- Botón “Me apunto / Me bajo” -->
+<ion-fab vertical="bottom" horizontal="center" slot="fixed">
+  <ion-fab-button
+    (click)="toggleJoin()"
+    [color]="isJoined ? 'danger' : 'primary'">
+    <ion-icon name="hand-right-outline"></ion-icon>
+    {{ isJoined ? 'Me bajo' : 'Me apunto' }}
+  </ion-fab-button>
+</ion-fab>
+
+<!-- Botón Compartir -->
+<ion-fab vertical="bottom" horizontal="end" slot="fixed" edge>
+  <ion-fab-button (click)="share()">
+    <ion-icon name="share-social-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+<!-- Skeleton de carga -->
+<ng-template #loading>
+  <ion-card class="skeleton-card">
+      <ion-card-header>
+      <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-skeleton-text animated></ion-skeleton-text>
+      <ion-skeleton-text animated></ion-skeleton-text>
+      <ion-skeleton-text animated style="width: 40%"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+    </ion-card-content>
+  </ion-card>
+</ng-template>

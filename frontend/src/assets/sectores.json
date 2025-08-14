@@ -1,0 +1,35 @@
+[
+  {
+    "id": "siurana",
+    "nombre": "Siurana",
+    "provincia": "Tarragona",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Escalada_en_siurana-2012.JPG/960px-Escalada_en_siurana-2012.JPG",
+    "tipoRoca"  : "Limestone",
+    "orientacion": "Tarde",
+    "minAltura" : 15,
+    "maxAltura" : 38,
+    "mesesBuenos": ["J","F","N","D"],
+    "lat": 42.345,        
+    "lon": 2.015,
+    "parkingLat": 41.3750,
+    "parkingLon": 0.7040,       
+    "vias": [
+      { "id": "pepe",  "nombre": "Vía del Tío Pepe", "grado": "6b+", "altura": 28 },
+      { "id": "placa", "nombre": "Placa Dura",       "grado": "7a",  "altura": 32 },
+      { "id": "eskarrikasko",  "nombre": "Eskarrikasko", "grado": "6c+", "altura": 25 },
+      { "id": "diable", "nombre": "Diable",       "grado": "7a+",  "altura": 22 }
+    ]
+  },
+  {
+    "id": "margalef",
+    "nombre": "Margalef",
+    "provincia": "Tarragona",
+    "imageUrl": "https://picsum.photos/800/400?random=1"
+  },
+  {
+    "id": "montserrat",
+    "nombre": "Montserrat",
+    "provincia": "Barcelona",
+    "imageUrl": "https://picsum.photos/800/400?random=1"
+  }
+]

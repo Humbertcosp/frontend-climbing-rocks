@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Ayuda / FAQs</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    <div class="help-container">
+
+  <ion-accordion-group>
+    <ion-accordion value="q1">
+      <ion-item slot="header">
+        <ion-icon name="help-circle-outline" slot="start"></ion-icon>
+        <ion-label>¿Cómo creo una quedada?</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        Para crear una quedada ve a la pestaña “Quedadas” y pulsa el botón “+”. Rellena la fecha,
+        ubicación y detalles, y finalmente confirma para publicarla.
+      </div>
+    </ion-accordion>
+
+    <ion-accordion value="q2">
+      <ion-item slot="header">
+        <ion-icon name="chatbubble-ellipses-outline" slot="start"></ion-icon>
+        <ion-label>¿Cómo envío un mensaje en el chat?</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        Entra en la pestaña “Chats”, selecciona la conversación y usa la barra inferior para escribir
+        y enviar tu mensaje. Puedes alternar emojis con el icono de la izquierda.
+      </div>
+    </ion-accordion>
+
+    <ion-accordion value="q3">
+      <ion-item slot="header">
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        <ion-label>¿Cómo añado participantes a mi grupo?</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        Dentro de la quedada, pulsa el icono de información (i) y luego “Invitar participantes”.
+        Comparte el enlace o selecciona contactos de tu lista.
+      </div>
+    </ion-accordion>
+
+    <ion-accordion value="q4">
+      <ion-item slot="header">
+        <ion-icon name="alert-circle-outline" slot="start"></ion-icon>
+        <ion-label>¿Qué hago si olvido mi contraseña?</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        En la pantalla de login pulsa “¿Olvidaste tu contraseña?”. Se te enviará un correo con un
+        enlace para restablecerla.
+      </div>
+    </ion-accordion>
+
+    <ion-accordion value="q5">
+      <ion-item slot="header">
+        <ion-icon name="settings-outline" slot="start"></ion-icon>
+        <ion-label>¿Cómo cambio el idioma de la app?</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        Ve a Perfil → Preferencias → Idioma. Selecciona el idioma que prefieras y la app se
+        actualizará automáticamente.
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+  </div>
+
+</ion-content>

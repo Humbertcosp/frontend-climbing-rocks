@@ -1,0 +1,80 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Ajustes de cuenta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Avatar + botón -->
+  <div class="avatar-section">
+    <ion-avatar (click)="changeAvatar()">
+      <img [src]="usuario.avatarUrl" />
+      <div class="overlay">
+        <ion-icon name="camera-outline"></ion-icon>
+      </div>
+    </ion-avatar>
+    <ion-button fill="outline" size="small" (click)="changeAvatar()">
+      Cambiar foto
+    </ion-button>
+  </div>
+
+  <!-- Datos personales: un sólo item por campo -->
+  <ion-list inset class="account-list-card">
+    <ion-list-header>
+      <ion-label>Datos personales</ion-label>
+    </ion-list-header>
+
+    <ion-item button (click)="editField('nombre')" detail="true">
+      <ion-icon slot="start" name="person-outline"></ion-icon>
+      <ion-label>Nombre</ion-label>
+      <ion-note slot="end">{{ usuario.nombre }}</ion-note>
+    </ion-item>
+
+    <ion-item button (click)="editField('email')" detail="true">
+      <ion-icon slot="start" name="mail-outline"></ion-icon>
+      <ion-label>Email</ion-label>
+      <ion-note slot="end">{{ usuario.email || '–' }}</ion-note>
+    </ion-item>
+
+    <ion-item button (click)="editField('telefono')" detail="true">
+      <ion-icon slot="start" name="call-outline"></ion-icon>
+      <ion-label>Teléfono</ion-label>
+      <ion-note slot="end">{{ usuario.telefono || 'No asignado' }}</ion-note>
+    </ion-item>
+  </ion-list>
+
+  <!-- Seguridad -->
+  <ion-list inset class="account-list-card">
+    <ion-list-header>
+      <ion-label>Seguridad</ion-label>
+    </ion-list-header>
+
+    <ion-item button (click)="changePassword()" detail="true">
+      <ion-icon slot="start" name="key-outline"></ion-icon>
+      <ion-label>Cambiar contraseña</ion-label>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon slot="start" name="shield-checkmark-outline"></ion-icon>
+      <ion-label>Autenticación en dos pasos</ion-label>
+      <ion-toggle
+        slot="end"
+        [checked]="twoFactorEnabled"
+        (ionChange)="toggleTwoFactor()">
+      </ion-toggle>
+    </ion-item>
+  </ion-list>
+
+  <!-- Eliminar cuenta -->
+  <div class="danger-zone">
+    <ion-button expand="block" color="danger" (click)="deleteAccount()">
+      <ion-icon slot="start" name="trash-outline"></ion-icon>
+      Eliminar mi cuenta
+    </ion-button>
+  </div>
+
+</ion-content>

@@ -1,0 +1,117 @@
+/* --- HEADER --- */
+.chat-header {
+  display: flex;
+  align-items: center;
+}
+.chat-header-avatar {
+  width: 32px; height: 32px; margin-right: 8px;
+  img { object-fit: cover; border-radius: 50%; }
+}
+.chat-header-text { display: flex; flex-direction: column; }
+.chat-header-title { font-size: 1.125rem; font-weight: 600; }
+.chat-header-subtitle {
+  font-size: 0.75rem; color: var(--ion-color-medium);
+  margin-top: -2px;
+}
+
+/* --- CONTENEDOR MENSAJES --- */
+.messages {
+  display: flex; flex-direction: column;
+  padding: 16px;
+  margin-bottom: calc(56px + env(safe-area-inset-bottom));
+}
+.date-sep {
+  text-align: center; font-size: 0.75rem;
+  color: var(--ion-color-medium);
+  margin: 16px 0 8px;
+}
+
+/* --- BURBUJAS --- */
+.message {
+  position: relative;
+  max-width: 75%;
+  padding: 10px 16px;
+  margin: 6px 0;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  display: block;
+
+  .text { margin: 0 0 4px; line-height:1.4; }
+  .ts   { font-size:0.65rem; opacity:0.6; text-align:right; }
+}
+
+.message.them {
+  align-self: flex-start;
+  background: #ffffff; /* blanco puro */
+  color: var(--ion-color-dark);
+  &::after {
+    content: ""; position: absolute; top:14px; left:-8px;
+    border:8px solid transparent;
+    border-right-color: #ffffff;
+  }
+}
+
+.message.me {
+  align-self: flex-end;
+  background: #D0EBFF; /* azul claro */
+  color: var(--ion-color-dark);
+  &::after {
+    content: ""; position: absolute; top:14px; right:-8px;
+    border:8px solid transparent;
+    border-left-color: #D0EBFF;
+  }
+}
+
+/* --- INDICADOR “ESCRIBIENDO” --- */
+.typing-indicator {
+  display:flex; gap:4px; padding:6px; margin:8px auto 0;
+  background: var(--ion-color-light); border-radius:12px;
+  span {
+    width:6px; height:6px; background:var(--ion-color-medium);
+    border-radius:50%; animation:blink 1s infinite;
+  }
+  span:nth-child(2){animation-delay:0.2s;}
+  span:nth-child(3){animation-delay:0.4s;}
+}
+@keyframes blink{0%,100%{opacity:0.3;}50%{opacity:1;}}
+
+/* --- PICKER DE ICONOS --- */
+.icon-picker {
+  display:flex; flex-wrap:wrap; padding:8px; background:#fff;
+  border-bottom:1px solid #ddd;
+  button {
+    font-size:1.25rem; width:40px; height:40px;
+    border:none; background:transparent; margin:4px;
+  }
+}
+
+/* --- INPUT BAR --- */
+.chat-input-item {
+  --padding:6px 8px;
+  background: #ffffff;
+  ion-textarea {
+    flex:1; border-radius:20px;
+    background:#f5f5f5; padding:6px 12px;
+    --padding-start:0; --padding-end:0;
+  }
+  ion-button { margin-left:8px; }
+}
+
+
+ion-footer {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom) + 56px); 
+  right: 0;
+  z-index: 1000;
+}
+
+
+ion-content {
+  --padding-bottom: calc(60px + 56px + env(safe-area-inset-bottom));
+ 
+}
+
+
+.messages {
+  margin-bottom: 0;
+}

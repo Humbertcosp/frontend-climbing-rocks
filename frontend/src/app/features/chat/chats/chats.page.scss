@@ -1,0 +1,58 @@
+/* Ajustes al contenido */
+ion-content {
+  --padding-top: 0;
+}
+
+/* Margen en el searchbar */
+ion-searchbar {
+  margin: 0 12px 8px;
+  --background: var(--ion-color-light);
+  --border-radius: 12px;
+}
+
+/* Lista de chats */
+ion-list {
+  margin: 0 8px;
+}
+
+/* Cada item */
+ion-item {
+  --inner-padding-start: 12px;
+  --inner-padding-end: 12px;
+  --min-height: 60px;
+  
+  h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  p {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+/* Avatar de cada chat */
+ion-avatar {
+  width: 44px;
+  height: 44px;
+  margin-right: 12px;
+
+  img {
+    object-fit: cover;
+  }
+}
+
+/* Badge de no leídos */
+ion-badge {
+  font-size: 0.75rem;
+  padding: 0 6px;
+  min-width: 20px;
+  line-height: 1.2;
+}
+
+/* Opciones al deslizar */
+ion-item-options {
+  font-size: 0.9rem;
+}

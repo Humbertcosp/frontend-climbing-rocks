@@ -1,0 +1,105 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Feed</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="feed-container">
+
+  <ion-card *ngFor="let post of posts" class="post-card">
+
+    <!-- Cabecera -->
+    <ion-item lines="none" class="card-header">
+      <ion-avatar slot="start">
+        <img [src]="post.user.avatarUrl" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ post.user.name }}</h2>
+      </ion-label>
+      <ion-button fill="clear" slot="end" (click)="openMenu(post)">
+        <ion-icon name="ellipsis-horizontal"></ion-icon>
+      </ion-button>
+    </ion-item>
+
+    <!-- Imagen -->
+    <div class="card-image">
+      <img [src]="post.imageUrl" />
+    </div>
+
+<!-- ─── Fila de acciones (HTML limpio) ─── -->
+<div class="action-row">
+  <!-- Me gusta -->
+  <button
+    class="action-btn"
+    [class.liked]="post.liked"
+    (click)="toggleLike(post)">
+    <ion-icon name="heart"></ion-icon>
+    <span class="icon-label">{{ post.likesCount }}</span>
+  </button>
+
+  <!-- Comentarios -->
+  <button
+    class="action-btn"
+    (click)="openComments(post)">
+    <ion-icon name="chatbubble-outline"></ion-icon>
+    <span class="icon-label">{{ post.comments.length }}</span>
+  </button>
+
+  <!-- Compartir (opcional) -->
+  <button
+    class="action-btn"
+    (click)="share(post)">
+    <ion-icon name="share-social-outline"></ion-icon>
+  </button>
+
+  <!-- Guardar -->
+  <button
+    class="action-btn bookmark"
+    [class.saved]="post.saved"
+    (click)="toggleSave(post)">
+    <ion-icon name="bookmark"></ion-icon>
+  </button>
+</div>
+
+
+
+    <ion-card-content>
+      <!-- Me gusta como texto (opcional) -->
+      <p class="likes">{{ post.likesCount }} me gusta</p>
+
+      <!-- Caption -->
+      <p class="caption">
+        <strong>{{ post.user.name }}</strong> {{ post.caption }}
+      </p>
+
+      <!-- Ver todos comentarios -->
+      <p
+        *ngIf="post.comments.length > 2"
+        class="see-all"
+        (click)="openComments(post)">
+        Ver todos {{ post.comments.length }} comentarios
+      </p>
+
+      <!-- Preview de comentarios -->
+      <div class="comments-preview">
+        <p *ngFor="let c of post.comments | slice:0:2">
+          <strong>{{ c.user }}:</strong> {{ c.text }}
+        </p>
+      </div>
+
+      <!-- Nuevo comentario -->
+      <div class="new-comment">
+        <ion-input
+          placeholder="Añadir un comentario…"
+          [(ngModel)]="newComment[post.id]"
+          (keydown.enter)="addComment(post)">
+        </ion-input>
+        <ion-button fill="clear" class="send-btn" (click)="addComment(post)">
+          <ion-icon name="send-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-card-content>
+
+  </ion-card>
+
+</ion-content>

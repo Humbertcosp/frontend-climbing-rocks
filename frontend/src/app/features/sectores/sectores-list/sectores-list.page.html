@@ -1,0 +1,24 @@
+<!-- sectores-list.page.html -->
+<ion-content fullscreen>
+  <ng-container *ngIf="sectores.length; else cargando">
+    <ion-card
+      *ngFor="let s of sectores"
+      routerDirection="forward"
+      [routerLink]="['/sectores', s.id]"
+      class="sector-card">
+
+      <ion-img [src]="s.imageUrl"></ion-img>
+      <div class="overlay">{{ s.nombre }}</div>
+    </ion-card>
+  </ng-container>
+
+  <ng-template #cargando>
+    <ion-spinner name="crescent" class="sp-center"></ion-spinner>
+  </ng-template>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button [routerLink]="['/sectores','create']">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

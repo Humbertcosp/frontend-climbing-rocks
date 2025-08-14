@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Quedadas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- —— Listado vertical de comprobación —— -->
+  <div class="cards-list">
+    <ion-card *ngFor="let q of cards" class="list-card" button [routerLink]="[q.id]" routerDirection="forward">
+      <!-- FOTO -->
+      <div class="card-image" [style.backgroundImage]="'url(' + (q.imageUrl||'assets/icon/escalada.png') + ')'">
+        <div class="card-overlay"></div>
+        <div class="card-title">{{ q.titulo }}</div>
+      </div>
+
+      <!-- FILA DE ICONOS -->
+      <div class="card-meta-icons">
+        <ion-chip>
+          <ion-icon name="location-outline"></ion-icon>
+          <span>{{ q.sectorNombre }}</span>
+        </ion-chip>
+        <ion-chip>
+          <ion-icon name="ribbon-outline"></ion-icon>
+          <span>{{ q.grado || '—' }}</span>
+        </ion-chip>
+        <ion-chip>
+          <ion-icon name="people-outline"></ion-icon>
+          <span>{{ q.asistentes.length }}</span>
+        </ion-chip>
+        <ion-chip>
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>{{ q.fecha | date:'shortDate' }}</span>
+        </ion-chip>
+        <ion-chip>
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{ q.hora }}</span>
+        </ion-chip>
+        <ion-chip>
+          <ion-icon name="car-outline"></ion-icon>
+          <span>{{ q.vehiculo }}</span>
+        </ion-chip>
+      </div>
+
+      <!-- DESCRIPCIÓN Y BOTÓN -->
+      <div class="card-body">
+        <p class="card-desc">{{ q.descripcion }}</p>
+        <ion-button expand="block" fill="solid" (click)="apuntarse(q)">
+          🖐 Me apunto
+        </ion-button>
+      </div>
+    </ion-card>
+  </div>
+
+</ion-content>

@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Acerca de</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding about-content">
+
+  <div class="logo-container">
+    <ion-avatar>
+      <img src="assets/icon/favicon.png" />
+    </ion-avatar>
+    <h2>App Escalada</h2>
+    <p class="version">Versión {{ appVersion }}</p>
+  </div>
+
+  <ion-list inset class="about-list-card">
+    <ion-list-header>
+      <ion-label>Información</ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-icon slot="start" name="person-outline"></ion-icon>
+      <ion-label>Desarrollado por</ion-label>
+      <ion-note slot="end">ClimbRocks</ion-note>
+    </ion-item>
+
+    <ion-item button (click)="openWebsite()">
+      <ion-icon slot="start" name="globe-outline"></ion-icon>
+      <ion-label>Visitar sitio web</ion-label>
+    </ion-item>
+
+    <ion-item button (click)="openLicenses()">
+      <ion-icon slot="start" name="document-text-outline"></ion-icon>
+      <ion-label>Licencias de terceros</ion-label>
+    </ion-item>
+  </ion-list>
+
+</ion-content>
