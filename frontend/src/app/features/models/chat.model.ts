@@ -5,6 +5,7 @@ export interface Message {
   text: string;
   timestamp: Date | string;
   from: string; 
+  
 }
 
 export interface ChatThread {
@@ -13,4 +14,5 @@ export interface ChatThread {
   lastMessage: string;
   lastTimestamp: Date;
   avatarUrl?: string;
+  updatedAt?: Date;   
 }

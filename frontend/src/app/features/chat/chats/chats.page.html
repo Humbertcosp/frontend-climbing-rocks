@@ -1,37 +1,32 @@
+<!-- chats.page.html -->
 <ion-header>
   <ion-toolbar>
     <ion-title>Chats</ion-title>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-searchbar
-      debounce="300"
-      placeholder="Buscar chat…"
-      [(ngModel)]="filter">
-    </ion-searchbar>
+    <ion-searchbar [(ngModel)]="filter" placeholder="Buscar..."></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item-sliding *ngFor="let c of filteredChats">
-      <ion-item button (click)="openChat(c)">
-        <ion-avatar slot="start">
-          <img [src]="c.avatarUrl" />
-        </ion-avatar>
-        <ion-label>
-          <h2>{{ c.title }}</h2>
-          <p class="ion-text-wrap">{{ c.lastMessage }}</p>
-        </ion-label>
-        <ion-note slot="end">{{ c.lastTimestamp | date:'shortTime' }}</ion-note>
-      </ion-item>
-      <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="deleteChat(c)">
-          Borrar
-        </ion-item-option>
-        <ion-item-option color="medium" (click)="archiveChat(c)">
-          Archivar
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
+  <ion-list *ngIf="filteredChats.length; else empty">
+    <ion-item button detail="false"
+              *ngFor="let c of filteredChats"
+              (click)="openChat(c)">
+      <ion-avatar slot="start">
+        <img [src]="c.avatarUrl || 'assets/avatar.svg'">
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ c.title }}</h2>
+        <p>{{ c.lastMessage || 'Sin mensajes aún' }}</p>
+      </ion-label>
+      <ion-note slot="end">{{ c.updatedAt | date:'shortTime' }}</ion-note>
+    </ion-item>
   </ion-list>
+
+  <ng-template #empty>
+    <ion-item lines="none">
+      <ion-label>No hay chats todavía</ion-label>
+    </ion-item>
+  </ng-template>
 </ion-content>

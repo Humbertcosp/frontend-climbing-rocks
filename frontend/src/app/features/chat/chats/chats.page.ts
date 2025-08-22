@@ -12,33 +12,17 @@ export class ChatsPage implements OnInit {
 
    filter = '';
   chats: ChatThread[] = [];
+  rooms: { id: string; title: string; avatarUrl?: string; lastMessage?: string; updatedAt?: Date }[] = [];
 
   constructor(private router: Router) {}
 
   ngOnInit() {
-    // Datos de ejemplo
-    this.chats = [
-      {
-        id: '1',
-        title: 'Marta',
-        avatarUrl: '/assets/icon/favicon.png',
-        lastMessage: '¡Nos vemos mañana!',
-        lastTimestamp: new Date(),
-      },
-      {
-        id: '2',
-        title: 'Grupo Siurana',
-        avatarUrl: '/assets/icon/favicon.png',
-        lastMessage: '¿Quién sube hoy?',
-        lastTimestamp: new Date(),
-      },
-      
-    ];
+    this.rooms = [];
   }
 
   openChat(c: ChatThread) {
-    this.router.navigate(['/chats', c.id]);
-  }
+  this.router.navigate(['/chat', c.id]); 
+}
 
   deleteChat(c: ChatThread) {
     this.chats = this.chats.filter(x => x.id !== c.id);
@@ -46,7 +30,7 @@ export class ChatsPage implements OnInit {
 
   archiveChat(c: ChatThread) {
     console.log('Archivar chat', c);
-    // tu lógica de archivar
+
   }
   get filteredChats(): ChatThread[] {
   if (!this.filter) return this.chats;

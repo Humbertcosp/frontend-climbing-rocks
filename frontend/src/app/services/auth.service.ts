@@ -1,15 +1,32 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Storage } from '@ionic/storage-angular';
-import { Usuario } from '../../app/features/models/usuario.model';
 import { HttpClient } from '@angular/common/http';
+import { Storage } from '@ionic/storage-angular';
+import { BehaviorSubject, Observable, from, switchMap, map } from 'rxjs';
+import { Usuario } from '../features/models/usuario.model';
+import { environment } from '../../environments/environment';
+
+type AuthResponse = { token: string; user: Usuario };
+export type RegisterDTO = {
+  nombre: string;
+  email: string;
+  password: string;
+  telefono?: string;
+  ciudad?: string;
+  pais?: string;
+  fechaNacimiento?: string;
+  newsletter?: boolean;
+  avatarUrl?: string; // si algún día subes/guardas el avatar
+};
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private USER_KEY = 'current-user';
   private _storageReady = false;
-  private _user$ = new BehaviorSubject<Usuario| null>(null);
-  public user$ = this._user$.asObservable();
+
+  private _user$ = new BehaviorSubject<Usuario | null>(null);
+  public  user$ = this._user$.asObservable();
+
+  private base = `${environment.apiUrl}/auth`; 
 
   constructor(private storage: Storage, private http: HttpClient) {
     this.init();
@@ -22,44 +39,49 @@ export class AuthService {
     if (saved) this._user$.next(saved);
   }
 
-  
-  async login(email: string, password: string): Promise<Usuario> {
-    const url = 'https://tu-backend.com/api/login';
-    const res: any = await this.http.post(url, { email, password }).toPromise();
-    const user: Usuario = res.user;
-    
-    
-    // guarda en storage
-    await this.storage.set(this.USER_KEY, user);
-    this._user$.next(user);
-    return user;
+  /** LOGIN -> Observable<Usuario> */
+  login(email: string, password: string): Observable<Usuario> {
+    return this.http.post<AuthResponse>(`${this.base}/login`, { email, password }).pipe(
+      switchMap(res => from(this.saveSession(res)).pipe(map(() => res.user)))
+    );
   }
 
-  async register(name: string, email: string, password: string): Promise<Usuario> {
-    const url = 'https://tu-backend.com/api/register';
-    const res: any = await this.http.post(url, { name, email, password }).toPromise();
-    const user: Usuario = res.user;
-    await this.storage.set(this.USER_KEY, user);
-    this._user$.next(user);
-    return user;
+  /** REGISTER -> Observable<Usuario>
+   *  (recibe un objeto, así evitas el error “Expected 3 arguments…”) */
+  register(payload: RegisterDTO): Observable<Usuario> {
+    return this.http.post<AuthResponse>(`${this.base}/register`, payload).pipe(
+      switchMap(res => from(this.saveSession(res)).pipe(map(() => res.user)))
+    );
   }
 
-    async getCurrentUser(): Promise<Usuario|null> {
-    if (!this._storageReady) {
-      await this.init();
-    }
-    const user = await this.storage.get(this.USER_KEY);
-    // opcional: this._user$.next(user);
-    return user;                     // <<<–– ¡Asegúrate de retornar!
+  /** Obtener usuario actual (promise) */
+  async getCurrentUser(): Promise<Usuario | null> {
+    if (!this._storageReady) await this.init();
+    return this.storage.get(this.USER_KEY);
   }
 
+  /** Logout */
   async logout(): Promise<void> {
+    localStorage.removeItem('token');
     await this.storage.remove(this.USER_KEY);
     this._user$.next(null);
   }
 
-  async changePassword(current: string, next: string): Promise<void> {
-  console.log('Cambio de contraseña:', current, '→', next);
+  /** Guardado de sesión */
+  private async saveSession(res: AuthResponse): Promise<void> {
+    localStorage.setItem('token', res.token);
+    await this.storage.set(this.USER_KEY, res.user);
+    this._user$.next(res.user);
+  }
 
-}
+  /** (opcional) token getter */
+  get token(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  /** (opcional) cambio de contraseña */
+  async changePassword(current: string, next: string): Promise<void> {
+    console.log('Cambio de contraseña:', current, '→', next);
+  }
+
 }

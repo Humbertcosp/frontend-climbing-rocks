@@ -7,7 +7,7 @@ import { Post, Comment } from '../features/models/post.model';
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
-  private base = `${environment.apiUrl}/posts`;
+   private base = `${environment.apiUrl}/posts`;
   // mientras no haya auth real, usa un id fijo
   private currentUserId = 'demo'; // debe coincidir con lo que usa tu backend
 

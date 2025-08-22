@@ -10,7 +10,7 @@ import { Usuario } from '../features/models/usuario.model';
   providedIn: 'root'
 })
  export class UserService {
-  private base = `${environment.apiUrl}/users`;
+ private base = `${environment.apiUrl}/users`;
 
   constructor(private http: HttpClient) {}
 

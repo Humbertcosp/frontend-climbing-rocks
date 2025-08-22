@@ -1,13 +1,190 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>register</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content fullscreen>
+  <div class="container">
+    <ion-card class="auth-card">
+      <ion-card-header>
+        <ion-card-title>Crear cuenta</ion-card-title>
+        <ion-card-subtitle>Únete a la comunidad</ion-card-subtitle>
+      </ion-card-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title size="large">register</ion-title>
-    </ion-toolbar>
-  </ion-header>
+      <ion-card-content>
+        <form [formGroup]="form" (ngSubmit)="submit()">
+
+          <!-- Nombre -->
+          <ion-item
+            fill="outline"
+            shape="round"
+            class="field"
+            [class.invalid]="f.nombre.invalid && (f.nombre.dirty || f.nombre.touched)">
+            <ion-icon name="person-outline" slot="start"></ion-icon>
+            <ion-input
+              label="Nombre"
+              label-placement="floating"
+              formControlName="nombre"
+              autocomplete="name">
+            </ion-input>
+          </ion-item>
+          <ion-note class="error"
+            *ngIf="f.nombre.errors?.['required'] && (f.nombre.dirty || f.nombre.touched)">
+            El nombre es obligatorio.
+          </ion-note>
+          <ion-note class="error"
+            *ngIf="f.nombre.errors?.['minlength'] && (f.nombre.dirty || f.nombre.touched)">
+            Mínimo 2 caracteres.
+          </ion-note>
+
+          <!-- Email -->
+          <ion-item
+            fill="outline"
+            shape="round"
+            class="field"
+            [class.invalid]="f.email.invalid && (f.email.dirty || f.email.touched)">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-input
+              type="email"
+              label="Email"
+              label-placement="floating"
+              formControlName="email"
+              autocomplete="email">
+            </ion-input>
+          </ion-item>
+          <ion-note class="error"
+            *ngIf="f.email.errors?.['required'] && (f.email.dirty || f.email.touched)">
+            El email es obligatorio.
+          </ion-note>
+          <ion-note class="error"
+            *ngIf="f.email.errors?.['email'] && (f.email.dirty || f.email.touched)">
+            Email no válido.
+          </ion-note>
+
+          <!-- Contraseña -->
+          <ion-item
+            fill="outline"
+            shape="round"
+            class="field"
+            [class.invalid]="f.password.invalid && (f.password.dirty || f.password.touched)">
+            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+            <ion-input
+              [type]="showPass ? 'text' : 'password'"
+              label="Contraseña"
+              label-placement="floating"
+              formControlName="password"
+              autocomplete="new-password">
+            </ion-input>
+            <ion-button fill="clear" size="small" slot="end" (click)="showPass=!showPass">
+              <ion-icon [name]="showPass ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <div class="strength" *ngIf="passwordStrength">
+            Fortaleza:
+            <ion-chip [color]="passwordStrength==='fuerte' ? 'success' : passwordStrength==='media' ? 'warning' : 'danger'">
+              {{ passwordStrength }}
+            </ion-chip>
+          </div>
+          <ion-note class="hint">
+            Mín. 8 caracteres, mayúscula, minúscula y número.
+          </ion-note>
+
+          <!-- Confirmar -->
+          <ion-item
+            fill="outline"
+            shape="round"
+            class="field"
+            [class.invalid]="(form.errors?.['passwordsMismatch'] && (f.confirmar.dirty || f.confirmar.touched))">
+            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+            <ion-input
+              [type]="showConfirm ? 'text' : 'password'"
+              label="Confirmar contraseña"
+              label-placement="floating"
+              formControlName="confirmar"
+              autocomplete="new-password">
+            </ion-input>
+            <ion-button fill="clear" size="small" slot="end" (click)="showConfirm=!showConfirm">
+              <ion-icon [name]="showConfirm ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <ion-note class="error"
+            *ngIf="form.errors?.['passwordsMismatch'] && (f.confirmar.dirty || f.confirmar.touched)">
+            Las contraseñas no coinciden.
+          </ion-note>
+
+          <!-- Ciudad -->
+          <ion-item fill="outline" shape="round" class="field">
+            <ion-icon name="location-outline" slot="start"></ion-icon>
+            <ion-input
+              label="Ciudad (opcional)"
+              label-placement="floating"
+              formControlName="ciudad"
+              autocomplete="address-level2">
+            </ion-input>
+          </ion-item>
+
+          <!-- País -->
+          <ion-item fill="outline" shape="round" class="field">
+            <ion-icon name="flag-outline" slot="start"></ion-icon>
+            <ion-select
+              interface="popover"
+              label="País"
+              label-placement="floating"
+              formControlName="pais">
+              <ion-select-option value="ES">España</ion-select-option>
+              <ion-select-option value="FR">Francia</ion-select-option>
+              <ion-select-option value="IT">Italia</ion-select-option>
+              <ion-select-option value="PT">Portugal</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <!-- Fecha nacimiento -->
+          <ion-item fill="outline" shape="round" class="field">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            <ion-input
+              type="date"
+              label="Fecha de nacimiento"
+              label-placement="floating"
+              formControlName="fechaNacimiento">
+            </ion-input>
+          </ion-item>
+
+          <!-- Preferencias / términos -->
+          <div class="row">
+            <ion-item lines="none" class="compact">
+              <ion-toggle formControlName="newsletter">Quiero recibir noticias</ion-toggle>
+            </ion-item>
+
+            <ion-item lines="none" class="compact terms"
+                      [class.invalid]="f.aceptaTerminos.invalid && (f.aceptaTerminos.dirty || f.aceptaTerminos.touched)">
+              <ion-checkbox formControlName="aceptaTerminos" slot="start"></ion-checkbox>
+              <div class="terms-text">
+                Acepto los <a routerLink="/legal/terminos">Términos</a> y la
+                <a routerLink="/legal/privacidad">Privacidad</a>
+              </div>
+            </ion-item>
+            <ion-note class="error"
+              *ngIf="f.aceptaTerminos.errors?.['required'] && (f.aceptaTerminos.dirty || f.aceptaTerminos.touched)">
+              Debes aceptar los términos para continuar.
+            </ion-note>
+          </div>
+
+          <!-- Error de servidor -->
+          <ion-note *ngIf="error" color="danger" class="server-error">{{ error }}</ion-note>
+
+          <!-- Botón -->
+          <ion-button
+            expand="block"
+            size="large"
+            shape="round"
+            class="submit"
+            type="submit"
+            [disabled]="form.invalid || loading">
+            <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+            <span *ngIf="!loading">Registrarme</span>
+          </ion-button>
+
+          <div class="alt">
+            ¿Ya tienes cuenta?
+            <a routerLink="/auth/login">Inicia sesión</a>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>
