@@ -158,3 +158,35 @@
     margin-left: 8px;
   }
 }
+.feed-container {
+  --padding-bottom: 88px; // deja aire para el FAB
+}
+
+ion-fab {
+  right: 16px;
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+}
+
+ion-fab-button {
+  /* botón redondo con sombra */
+  box-shadow: 0 10px 24px rgba(0,0,0,.18);
+  border-radius: 999px;
+  /* opcional: look más llamativo
+  --background: linear-gradient(135deg, #5851DB, #833AB4, #E1306C, #F56040);
+  */
+}
+
+.empty {
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+  h3 {
+    margin: 6px 0 8px;
+    color: var(--ion-color-dark);
+  }
+}

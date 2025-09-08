@@ -1,29 +1,30 @@
-<ion-footer class="bottom-nav" translucent>
+<ion-footer class="bottom-nav" [translucent]="true" *ngIf="!hidden">
   <ion-toolbar>
+    <nav class="tabs">
+      <button class="tab" [class.active]="isActive('/home')" (click)="go('/home')">
+        <ion-icon name="home-outline"></ion-icon>
+        <span>Inicio</span>
+      </button>
 
-    <ion-buttons slot="primary">
+      <button class="tab" [class.active]="isActive('/explorar')" (click)="go('/explorar')">
+        <ion-icon name="compass-outline"></ion-icon>
+        <span>Explorar</span>
+      </button>
 
-      <a class="nav-btn" routerLink="/home"     routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
-        <ion-icon name="home-outline"></ion-icon><span>Inicio</span>
-      </a>
+      
+      <button class="tab central" (click)="openCreatePost()">
+        <ion-icon name="add"></ion-icon>
+      </button>
 
-      <a class="nav-btn" routerLink="/sectores" routerLinkActive="active">
-        <ion-icon name="map-outline"></ion-icon><span>Sectores</span>
-      </a>
+      <button class="tab" [class.active]="isActive('/quedadas')" (click)="go('/quedadas')">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>Quedadas</span>
+      </button>
 
-      <a class="nav-btn" routerLink="/quedadas" routerLinkActive="active">
-        <ion-icon name="calendar-outline"></ion-icon><span>Quedadas</span>
-      </a>
-
-      <a class="nav-btn" routerLink="/chats"    routerLinkActive="active">
-        <ion-icon name="chatbubble-ellipses-outline"></ion-icon><span>Chats</span>
-      </a>
-
-      <a class="nav-btn" routerLink="/profile"  routerLinkActive="active">
-        <ion-icon name="person-circle-outline"></ion-icon><span>Perfil</span>
-      </a>
-
-    </ion-buttons>
-
+      <button class="tab" [class.active]="isActive('/profile')" (click)="go('/profile')">
+        <ion-icon name="person-circle-outline"></ion-icon>
+        <span>Perfil</span>
+      </button>
+    </nav>
   </ion-toolbar>
 </ion-footer>

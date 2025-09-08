@@ -1,0 +1,34 @@
+<ion-header><ion-toolbar><ion-title>Explorar</ion-title></ion-toolbar></ion-header>
+
+<ion-content>
+  <ion-segment value="posts" (ionChange)="segmentChanged($event)">
+    <ion-segment-button value="posts"><ion-label>Publicaciones</ion-label></ion-segment-button>
+    <ion-segment-button value="people"><ion-label>Gente</ion-label></ion-segment-button>
+  </ion-segment>
+
+  <ng-container *ngIf="tab==='posts'">
+    <ion-list *ngIf="posts?.length; else noPosts">
+      <ion-item *ngFor="let p of posts">
+        <ion-avatar slot="start"><img [src]="p.user.avatarUrl || 'assets/avatar.svg'"></ion-avatar>
+        <ion-label>
+          <h2>{{ p.user.name }}</h2>
+          <p>{{ p.caption }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+    <ng-template #noPosts><div class="ion-padding ion-text-center">No hay publicaciones.</div></ng-template>
+  </ng-container>
+
+  <ng-container *ngIf="tab==='people'">
+    <ion-list *ngIf="people?.length; else noPeople">
+      <ion-item *ngFor="let u of people">
+        <ion-avatar slot="start"><img [src]="u.fotoPerfil || 'assets/avatar.svg'"></ion-avatar>
+        <ion-label><h2>{{ u.nombre }}</h2></ion-label>
+        <ion-button slot="end" size="small" [color]="u.following ? 'success':'primary'" (click)="toggleFollow(u)">
+          {{ u.following ? 'Siguiendo' : 'Seguir' }}
+        </ion-button>
+      </ion-item>
+    </ion-list>
+    <ng-template #noPeople><div class="ion-padding ion-text-center">No hay sugerencias aún.</div></ng-template>
+  </ng-container>
+</ion-content>

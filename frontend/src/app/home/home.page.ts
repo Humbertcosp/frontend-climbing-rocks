@@ -1,9 +1,14 @@
 // src/app/home/home.page.ts
-import { Component, OnInit }         from '@angular/core';
-import { UserService }               from '../services/user.service';
-import { PostService }               from '../services/post.service';
-import { Usuario }                   from '../features/models/usuario.model';
-import { Post, Comment }             from '../features/models/post.model';
+import { Component, OnInit } from '@angular/core';
+import { ModalController, ToastController } from '@ionic/angular';
+
+import { UserService } from '../services/user.service';
+import { PostService } from '../services/post.service';
+
+import { Usuario } from '../features/models/usuario.model';
+import { Post }     from '../features/models/post.model';
+import { CreatePostModal } from '../features/posts/create-post.modal';
+import { FollowService } from '../services/follow.service';
 
 @Component({
   selector: 'app-home',
@@ -15,21 +20,52 @@ export class HomePage implements OnInit {
   posts: Post[] = [];
   users: Usuario[] = [];
   newComment: { [postId: string]: string } = {};
+  loadingPosts = false;
 
   constructor(
     private userService: UserService,
-     private postService: PostService
+    private postService: PostService,
+    private modalCtrl: ModalController,
+    private toast: ToastController,
+    private followSvc: FollowService
   ) {}
 
   ngOnInit() {
     this.loadUsers();
+    this.loadPosts();
+  }
 
-   
-    this.postService.getPosts().subscribe(
-     posts => this.posts = posts,
-      err   => console.error('Error al cargar posts', err)
-     );
-    }
+ loadPosts() {
+  this.loadingPosts = true;
+  this.postService.listFollowing().subscribe({
+    next: posts => { this.posts = posts; this.loadingPosts = false; },
+    error: err   => { console.error(err); this.loadingPosts = false; }
+  });
+  }
+  async openCreate() {
+    const modal = await this.modalCtrl.create({ component: CreatePostModal });
+    modal.onWillDismiss().then(({ role, data }) => {
+      if (role === 'created' && data) this.posts = [data, ...this.posts]; // UI rápida
+      else if (role === 'created') this.loadPosts(); // o recarga si prefieres
+    });
+    await modal.present();
+  }
+  toggleFollow(targetId?: string) {
+  if (!targetId) return;
+  const found = this.posts.find(p => p.user.userId === targetId);
+  const following = !!found?.user.following;
+
+  const req$ = following ? this.followSvc.unfollow(targetId) : this.followSvc.follow(targetId);
+  req$.subscribe({
+    next: () => {
+      // marca/desmarca todos los posts de ese usuario en el feed
+      this.posts.forEach(p => {
+        if (p.user.userId === targetId) p.user.following = !following as any;
+      });
+    },
+    error: (e) => console.error(e)
+  });
+}
 
   loadUsers() {
     this.userService.getUsers().subscribe(
@@ -39,7 +75,7 @@ export class HomePage implements OnInit {
   }
 
   addUser(nombre: string, email: string) {
-    if (!nombre || !email) { return; }
+    if (!nombre || !email) return;
     this.userService.createUser({ nombre, email }).subscribe(
       () => this.loadUsers(),
       err => console.error('Error al crear usuario', err)
@@ -54,65 +90,55 @@ export class HomePage implements OnInit {
   }
 
   toggleLike(post: Post) {
-  // actualizamos en UI inmediatamente
-  post.liked      = !post.liked;
-  post.likesCount += post.liked ? 1 : -1;
+    post.liked      = !post.liked;                 // UI optimista
+    post.likesCount = (post.likesCount || 0) + (post.liked ? 1 : -1);
 
-  // persistimos en backend
-  this.postService.toggleLike(post.id).subscribe({
-    next: updated => {
-      // sincronizamos el objeto local con la respuesta del servidor
-      Object.assign(post, updated);
-    },
-    error: err => {
-      console.error('Error toggling like', err);
-      // opcional: revertir UI si falla
-      post.liked      = !post.liked;
-      post.likesCount += post.liked ? 1 : -1;
-    }
-  });
-}
+    this.postService.toggleLike(post.id).subscribe({
+      next: updated => Object.assign(post, updated),
+      error: err => {
+        console.error('Error toggling like', err);
+        // revertir si falla
+        post.liked      = !post.liked;
+        post.likesCount = (post.likesCount || 0) + (post.liked ? 1 : -1);
+      }
+    });
+  }
 
   toggleSave(post: Post) {
     post.saved = !post.saved;
-    // aquí podrías llamar a un endpoint para guardar post
+    // aquí podrías llamar a un endpoint de guardados
   }
 
- addComment(post: Post) {
-  const text = this.newComment[post.id]?.trim();
-  if (!text) return;
+  addComment(post: Post) {
+    const text = this.newComment[post.id]?.trim();
+    if (!text) return;
 
-  // opcional: mostrar en UI antes de la llamada
-  post.comments.push({ user: 'Yo', text });
+    post.comments = post.comments || [];
+    post.comments.push({ user: 'Yo', text });  // UI optimista
 
-  // llamar al backend
-  this.postService.addComment(post.id, { user: 'Yo', text }).subscribe({
-    next: updated => {
-      // actualizamos con la versión que nos devuelve el servidor
-      Object.assign(post, updated);
-      this.newComment[post.id] = '';
-    },
-    error: err => {
-      console.error('Error al añadir comentario', err);
-      // opcional: quitar comentario de UI
-      post.comments.pop();
-    }
-  });
-}
+    this.postService.addComment(post.id, { user: 'Yo', text }).subscribe({
+      next: updated => {
+        Object.assign(post, updated);
+        this.newComment[post.id] = '';
+      },
+      error: err => {
+        console.error('Error al añadir comentario', err);
+        post.comments.pop(); 
+      }
+    });
+  }
 
   openComments(post: Post) {
     console.log('Abrir comentarios de', post.id);
-    // Ejemplo de navegación:
-    // this.router.navigate(['/post', post.id, 'comments']);
   }
 
   share(post: Post) {
     console.log('Compartir post', post.id);
-    // aquí tu share sheet nativo
   }
 
   openMenu(post: Post) {
     console.log('Mostrar menú para post', post.id);
-    // ej. this.actionSheetController.create({…})
   }
+
+
 }

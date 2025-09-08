@@ -75,3 +75,35 @@ ion-list-header {
   --background: var(--ion-color-danger);
   --color: var(--ion-color-light);
 }
+
+ion-content {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 24px;
+}
+
+.guest-wrap {
+  min-height: calc(100vh - 56px); // alto restante bajo el toolbar
+  display: grid;
+  place-items: center;
+}
+
+.guest-card {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+
+  ion-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    padding: 28px;
+  }
+}
+
+.guest-icon {
+  font-size: 84px;
+  opacity: 0.35;
+  margin-bottom: 4px;
+}

@@ -99,12 +99,21 @@
 
   <!-- Estado sin sesión -->
   <ng-template #sinSesion>
-    <div class="empty-state ion-padding">
-      <ion-icon name="person-circle-outline" style="font-size:72px; opacity:.4"></ion-icon>
-      <h2>Sin sesión</h2>
-      <p>Inicia sesión para ver tu perfil.</p>
-      <ion-button routerLink="/auth/login">Entrar</ion-button>
-    </div>
-  </ng-template>
+  <div class="guest-wrap">
+    <ion-card class="guest-card">
+      <ion-card-content>
+        <ion-icon name="person-circle-outline" class="guest-icon"></ion-icon>
+        <h2>Sin sesión</h2>
+        <p>Inicia sesión para ver y editar tu perfil.</p>
+
+        <ion-button expand="block" routerLink="/auth/login">Entrar</ion-button>
+        <ion-button expand="block" fill="clear" routerLink="/auth/register">
+          Crear cuenta
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ng-template>
+
 
 </ion-content>

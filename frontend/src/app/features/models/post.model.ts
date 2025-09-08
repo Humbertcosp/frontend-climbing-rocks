@@ -9,6 +9,7 @@ export interface PostUser {
   name: string;
   avatarUrl: string;
   userId?: string;
+  following?: boolean;
 }
 
 export interface Post {
@@ -20,7 +21,7 @@ export interface Post {
   savedBy?: string[];
 
   // comunes:
-  id: string;                // lo mapeamos desde _id
+  id: string;                
   user: PostUser;
   imageUrl: string;
   caption?: string;

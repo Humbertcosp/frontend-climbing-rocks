@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Nueva publicación</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- PREVIEW / SELECTOR -->
+  <div class="image-area" (click)="pickFromGallery()">
+    <ng-container *ngIf="preview; else empty">
+      <img [src]="preview" alt="preview">
+    </ng-container>
+    <ng-template #empty>
+      <ion-icon name="image-outline"></ion-icon>
+      <div>Selecciona una foto</div>
+    </ng-template>
+  </div>
+
+  <div class="picker-row">
+    <ion-button size="small" fill="outline" (click)="pickFromCamera()">
+      <ion-icon name="camera-outline" slot="start"></ion-icon>
+      Cámara
+    </ion-button>
+
+    <ion-button size="small" fill="outline" (click)="pickFromGallery()">
+      <ion-icon name="images-outline" slot="start"></ion-icon>
+      Galería
+    </ion-button>
+
+    <!-- Fallback web -->
+    <label class="file-fallback">
+      <ion-icon name="cloud-upload-outline"></ion-icon>
+      <input #fileInput type="file" accept="image/*" capture="environment" (change)="pickFromFile($event)">
+    </label>
+  </div>
+
+  <!-- FORM -->
+  <form [formGroup]="form" (ngSubmit)="submit()">
+
+    <ion-item fill="outline" class="field">
+      <ion-textarea
+        label="Descripción"
+        label-placement="stacked"
+        placeholder="Cuéntanos el pegue, sector, sensaciones..."
+        autoGrow="true"
+        formControlName="texto">
+      </ion-textarea>
+    </ion-item>
+
+    <div class="chips">
+      <div class="chips-title">Disciplina</div>
+      <div class="chips-row">
+        <ion-chip
+          *ngFor="let d of disciplinas"
+          [outline]="form.value.disciplina !== d"
+          (click)="selectDisciplina(d)">
+          {{ d }}
+        </ion-chip>
+      </div>
+    </div>
+
+    <ion-item fill="outline" class="field">
+      <ion-input
+        label="Grado"
+        label-placement="stacked"
+        placeholder="6a, 7b+, V5..."
+        formControlName="grado">
+      </ion-input>
+    </ion-item>
+
+    <ion-item fill="outline" class="field">
+      <ion-input
+        label="Ubicación (opcional)"
+        label-placement="stacked"
+        placeholder="Montserrat - El Vermell"
+        formControlName="ubicacion">
+      </ion-input>
+    </ion-item>
+
+    <ion-button expand="block" type="submit" class="publish" [disabled]="form.invalid || loading">
+      <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+      <span *ngIf="!loading">Publicar</span>
+    </ion-button>
+  </form>
+</ion-content>
