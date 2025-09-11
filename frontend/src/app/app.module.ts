@@ -8,9 +8,14 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BottomNavModule } from './shared/bottom-nav/bottom-nav.module';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { AuthInterceptor } from './core/auth-interceptor';
+import { BottonChatComponent } from './shared/botton-chat/button-chat.component';
+import { ChatShortcutComponent } from './shared/chat-shortcut/chat-shortcut.component';
+import { PostsModule } from './features/posts/posts.module';
+
+
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, BottonChatComponent, ChatShortcutComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -18,6 +23,8 @@ import { AuthInterceptor } from './core/auth-interceptor';
     HttpClientModule,
     BottomNavModule,
     IonicStorageModule.forRoot(),
+    PostsModule,
+    
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

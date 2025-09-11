@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
-import { CreatePostModal } from '../../features/posts/create-post.modal';
+import { CreatePostModal } from '../../features/posts/create-post.modal/create-post.modal';
 
 @Component({
   selector: 'app-bottom-nav',

@@ -1,10 +1,11 @@
+// src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
-import { BehaviorSubject, Observable, from, switchMap, map } from 'rxjs';
+import { BehaviorSubject, Observable, from, switchMap, map, of, tap, catchError } from 'rxjs';
 import { Usuario } from '../features/models/usuario.model';
 import { environment } from '../../environments/environment';
-import { catchError, of, tap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 type AuthResponse = { token: string; user: Usuario };
 
@@ -28,8 +29,7 @@ export class AuthService {
   private _user$ = new BehaviorSubject<Usuario | null>(null);
   public user$ = this._user$.asObservable();
 
-  // Usa Opción A o B (ver arriba)
-  private base = `${environment.apiUrl}/auth`; // <-- asegúrate de que environment.apiUrl termina en /api
+  private base = `${environment.apiUrl}/auth`;
 
   constructor(private storage: Storage, private http: HttpClient) {
     this.init();
@@ -42,15 +42,12 @@ export class AuthService {
     if (saved) this._user$.next(saved);
   }
 
-  /** LOGIN -> Observable<Usuario> */
   login(email: string, password: string): Observable<Usuario> {
-    const body = { email, password };
-    return this.http.post<AuthResponse>(`${this.base}/login`, body).pipe(
+    return this.http.post<AuthResponse>(`${this.base}/login`, { email, password }).pipe(
       switchMap(res => from(this.saveSession(res)).pipe(map(() => res.user)))
     );
   }
 
-  /** REGISTER -> Observable<Usuario> */
   register(payload: RegisterDTO): Observable<Usuario> {
     return this.http.post<AuthResponse>(`${this.base}/register`, payload).pipe(
       switchMap(res => from(this.saveSession(res)).pipe(map(() => res.user)))
@@ -62,12 +59,16 @@ export class AuthService {
     return this.storage.get(this.USER_KEY);
   }
 
- async logout(): Promise<void> {
-  if (!this._storageReady) await this.storage.create();
-  localStorage.removeItem('token');       
-  await this.storage.remove(this.USER_KEY); 
-  this._user$.next(null);                 
-}
+  async changePassword(current: string, next: string): Promise<void> {
+    await firstValueFrom(this.http.post<void>(`${this.base}/change-password`, { current, next }));
+  }
+
+  async logout(): Promise<void> {
+    if (!this._storageReady) await this.storage.create();
+    localStorage.removeItem('token');
+    await this.storage.remove(this.USER_KEY);
+    this._user$.next(null);
+  }
 
   private async saveSession(res: AuthResponse): Promise<void> {
     localStorage.setItem('token', res.token);
@@ -79,26 +80,27 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  async changePassword(current: string, next: string): Promise<void> {
-    console.log('Cambio de contraseña:', current, '→', next);
+
+  async getToken(): Promise<string | null> {
+    return this.token; 
   }
 
   me() {
-  return this.http.get<{ user: Usuario }>(`${this.base}/me`).pipe(map(r => r.user));
-}
-
-refreshMe() {
-  const token = this.token;
-  if (!token) {
-    this._user$.next(null);
-    return of(null);
+    return this.http.get<{ user: Usuario }>(`${this.base}/me`).pipe(map(r => r.user));
   }
-  return this.me().pipe(
-    tap(async u => {
-      await this.storage.set(this.USER_KEY, u);
-      this._user$.next(u);
-    }),
-    catchError(() => of(null))
-  );
-}
+
+  refreshMe() {
+    const token = this.token;
+    if (!token) {
+      this._user$.next(null);
+      return of(null);
+    }
+    return this.me().pipe(
+      tap(async u => {
+        await this.storage.set(this.USER_KEY, u);
+        this._user$.next(u);
+      }),
+      catchError(() => of(null))
+    );
+  }
 }

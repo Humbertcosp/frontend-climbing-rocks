@@ -1,0 +1,71 @@
+/* Tarjeta limpia con aire */
+.form-card {
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  padding-bottom: 8px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px 6px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  ion-icon { font-size: 18px; color: var(--ion-color-primary); }
+}
+
+.field {
+  --highlight-color-focused: var(--ion-color-primary);
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  margin: 2px 0;
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 0 8px 6px;
+}
+
+
+@media (min-width: 540px) {
+  .row-2 { grid-template-columns: 1fr 1fr; }
+}
+
+.hint {
+  display: block;
+  padding: 0 16px 12px;
+}
+
+
+.sticky-cta {
+  position: sticky;
+  bottom: calc(env(safe-area-inset-bottom) + 8px);
+  padding: 12px 8px 0;
+  background: transparent;
+}
+
+ion-popover::part(content) {
+  width: 320px;
+  max-width: 92vw;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(0,0,0,.18);
+}
+
+
+.dt-compact {
+  
+  transform: scale(.92);
+  transform-origin: top center;
+
+  
+  --wheel-item-height: 28px;   
+  font-size: 13px;
+}
+
+
+ion-item.field {
+  --inner-padding-end: 8px;
+}

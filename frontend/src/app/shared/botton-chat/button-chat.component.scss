@@ -1,0 +1,16 @@
+.chat-floating{
+  position: fixed;
+  left: max(12px, env(safe-area-inset-left));
+  top: calc(env(safe-area-inset-top) + 8px);
+  width: 36px; height: 36px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(0,0,0,.18);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  border: 0;
+}
+.chat-floating ion-icon {
+  font-size: 20px;
+  color: var(--ion-color-primary);
+}

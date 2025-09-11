@@ -6,20 +6,28 @@
 
 <ion-content class="ion-padding-top">
 
-  <!-- Si hay usuario logueado -->
-  <ng-container *ngIf="(auth.user$ | async) as usuario; else sinSesion">
+  <!-- Con sesión -->
+  <ng-container *ngIf="usuario; else sinSesion">
     <div class="profile-header">
-      <ion-avatar>
-        <img [src]="usuario.avatarUrl || 'assets/img/avatar.svg'" alt="avatar" />
-      </ion-avatar>
-      <h2>{{ usuario.nombre }}</h2>
-      <p>{{ usuario.email }}</p>
-      <ion-button fill="outline" (click)="editProfile()">
-        <ion-icon slot="start" name="pencil-outline"></ion-icon>
-        Editar perfil
-      </ion-button>
+      <img class="avatar" [src]="avatarSrc" alt="avatar" />
+      <h1>{{ displayName }}</h1>
+      <p class="email">{{ displayEmail }}</p>
     </div>
 
+    <!-- Contadores compactos (tipo IG) -->
+<div class="follow-stats">
+  <div class="stat">
+    <div class="num">{{ followersCount }}</div>
+    <div class="lbl">Seguidores</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="stat">
+    <div class="num">{{ followingCount }}</div>
+    <div class="lbl">Siguiendo</div>
+  </div>
+</div>
     <ion-list inset>
       <ion-list-header>
         <ion-label>Cuenta</ion-label>
@@ -39,8 +47,8 @@
         <ion-icon slot="start" name="moon-outline"></ion-icon>
         <ion-label>Tema oscuro</ion-label>
         <ion-toggle slot="end"
-          [checked]="isDarkMode"
-          (ionChange)="toggleTheme($event.detail.checked)">
+                    [checked]="isDarkMode"
+                    (ionChange)="toggleTheme($event.detail.checked)">
         </ion-toggle>
       </ion-item>
 
@@ -48,8 +56,8 @@
         <ion-icon slot="start" name="notifications-outline"></ion-icon>
         <ion-label>Notificaciones</ion-label>
         <ion-toggle slot="end"
-          [checked]="notificationsEnabled"
-          (ionChange)="toggleNotifications($event.detail.checked)">
+                    [checked]="notificationsEnabled"
+                    (ionChange)="toggleNotifications($event.detail.checked)">
         </ion-toggle>
       </ion-item>
 
@@ -97,23 +105,22 @@
     </div>
   </ng-container>
 
-  <!-- Estado sin sesión -->
+  <!-- Sin sesión -->
   <ng-template #sinSesion>
-  <div class="guest-wrap">
-    <ion-card class="guest-card">
-      <ion-card-content>
-        <ion-icon name="person-circle-outline" class="guest-icon"></ion-icon>
-        <h2>Sin sesión</h2>
-        <p>Inicia sesión para ver y editar tu perfil.</p>
+    <div class="guest-wrap">
+      <ion-card class="guest-card">
+        <ion-card-content>
+          <ion-icon name="person-circle-outline" class="guest-icon"></ion-icon>
+          <h2>Sin sesión</h2>
+          <p>Inicia sesión para ver y editar tu perfil.</p>
 
-        <ion-button expand="block" routerLink="/auth/login">Entrar</ion-button>
-        <ion-button expand="block" fill="clear" routerLink="/auth/register">
-          Crear cuenta
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
-  </div>
-</ng-template>
-
+          <ion-button expand="block" routerLink="/auth/login">Entrar</ion-button>
+          <ion-button expand="block" fill="clear" routerLink="/auth/register">
+            Crear cuenta
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ng-template>
 
 </ion-content>

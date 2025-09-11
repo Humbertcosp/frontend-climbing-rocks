@@ -1,6 +1,6 @@
-<ion-footer class="bottom-nav" [translucent]="true" *ngIf="!hidden">
+<ion-footer class="bottom-nav">
   <ion-toolbar>
-    <nav class="tabs">
+    <div class="tabs">
       <button class="tab" [class.active]="isActive('/home')" (click)="go('/home')">
         <ion-icon name="home-outline"></ion-icon>
         <span>Inicio</span>
@@ -11,9 +11,9 @@
         <span>Explorar</span>
       </button>
 
-      
-      <button class="tab central" (click)="openCreatePost()">
-        <ion-icon name="add"></ion-icon>
+      <button class="tab" [class.active]="isActive('/sectores')" (click)="go('/sectores')">
+        <ion-icon name="map-outline"></ion-icon>
+        <span>Sectores</span>
       </button>
 
       <button class="tab" [class.active]="isActive('/quedadas')" (click)="go('/quedadas')">
@@ -21,10 +21,10 @@
         <span>Quedadas</span>
       </button>
 
-      <button class="tab" [class.active]="isActive('/profile')" (click)="go('/profile')">
-        <ion-icon name="person-circle-outline"></ion-icon>
+      <button class="tab" [class.active]="isActive('/perfil')" (click)="go('/profile')">
+        <ion-icon name="person-outline"></ion-icon>
         <span>Perfil</span>
       </button>
-    </nav>
+    </div>
   </ion-toolbar>
 </ion-footer>

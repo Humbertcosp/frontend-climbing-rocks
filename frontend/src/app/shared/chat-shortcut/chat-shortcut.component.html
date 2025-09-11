@@ -1,0 +1,9 @@
+<!-- SIEMPRE A LA IZQUIERDA -->
+<ion-buttons slot="start">
+  <ion-button fill="clear" [routerLink]="to" routerDirection="forward" [color]="color" aria-label="Abrir chats">
+    <ion-icon slot="icon-only" [name]="icon"></ion-icon>
+
+    
+    <ion-badge *ngIf="!!badge" class="badge">{{ badge }}</ion-badge>
+  </ion-button>
+</ion-buttons>

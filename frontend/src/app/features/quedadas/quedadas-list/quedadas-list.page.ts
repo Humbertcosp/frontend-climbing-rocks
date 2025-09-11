@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChildren, ElementRef, QueryList, AfterViewInit } from '@angular/core';
-import { GestureController, } from '@ionic/angular';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { QuedadasService } from 'src/app/services/quedadas.service';
 import { Quedada } from '../../models/quedada.model';
-import { ViewWillLeave }   from '@ionic/angular';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-quedadas-list',
@@ -10,65 +11,82 @@ import { ViewWillLeave }   from '@ionic/angular';
   styleUrls: ['./quedadas-list.page.scss'],
   standalone: false
 })
-export class QuedadasListPage implements OnInit, AfterViewInit, ViewWillLeave {
+export class QuedadasListPage implements OnInit, OnDestroy {
   cards: Quedada[] = [];
+  loading = false;
+  private destroy$ = new Subject<void>();
 
-  @ViewChildren('cardEl', { read: ElementRef })
-  cardElements!: QueryList<ElementRef<HTMLElement>>;
+  /** Debe ser pública si la usas en la vista (aunque ahora ya no la usamos directamente). */
+  public userId?: string;
 
   constructor(
     private qSrv: QuedadasService,
-    private gestureCtrl: GestureController,
-    private el: ElementRef<HTMLElement>
+    private auth: AuthService,
+    private router: Router
   ) {}
 
-  ngOnInit() {
-    // 1) dispara la carga inicial
-    this.qSrv.loadAll().subscribe();
-    // 2) suscríbete al stream de quedadas
-    this.qSrv.quedadas$.subscribe(list => this.cards = [...list]);
+  async ngOnInit() {
+    const u = await this.auth.getCurrentUser();
+    // intenta id o _id
+    this.userId = (u as any)?._id || (u as any)?.id;
+
+    this.qSrv.quedadas$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(list => (this.cards = list ?? []));
+
+    this.loading = true;
+    this.qSrv.loadAll()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => (this.loading = false),
+        error: () => (this.loading = false)
+      });
   }
 
-  ngAfterViewInit() {
-    this.cardElements.forEach((elRef, i) => {
-      const nativeEl = elRef.nativeElement;
-      const gesture = this.gestureCtrl.create({
-        el: nativeEl,
-        gestureName: 'swipe-card',
-        onMove: ev => {
-          nativeEl.style.transform =
-            `translateX(${ev.deltaX}px) rotate(${ev.deltaX/15}deg)`;
-        },
-        onEnd: ev => this.onEnd(ev, nativeEl, i)
-      });
-      gesture.enable();
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  trackById = (_: number, q: Quedada) => q.id;
+
+  /** ¿El usuario logueado está apuntado a esta quedada? (helper para el template) */
+  isJoined(q: Quedada): boolean {
+    const uid = this.userId;
+    if (!uid) return false;
+    const list = q.asistentes || [];
+    // soporta Usuario completo, {id}, {_id} o string id
+    return list.some((a: any) =>
+      a === uid || a?.id === uid || a?._id === uid
+    );
+  }
+
+  /** Click en "Me apunto" / "Salir" */
+  apuntarse(q: Quedada, ev?: Event) {
+    ev?.stopPropagation();
+
+    if (!this.userId) {
+      this.router.navigateByUrl('/auth/login');
+      return;
+    }
+
+    const req$ = this.isJoined(q)
+      ? this.qSrv.leave(q.id, this.userId)
+      : this.qSrv.join(q.id, this.userId);
+
+    req$.pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {}, // el servicio ya hace upsert
+      error: err => console.error('Error join/leave:', err)
     });
   }
 
-  private onEnd(detail: any, el: HTMLElement, index: number) {
-    const threshold = el.clientWidth * 0.4;
-    if (Math.abs(detail.deltaX) > threshold) {
-      const dir = detail.deltaX > 0 ? 1 : -1;
-      el.style.transition = 'transform 0.3s ease-out';
-      el.style.transform = `translateX(${dir * window.innerWidth}px) rotate(${dir * 30}deg)`;
-      setTimeout(() => this.cards.splice(index, 1), 300);
-      if (dir > 0) this.apuntarse(this.cards[index]);
-    } else {
-      el.style.transition = 'transform 0.2s ease-out';
-      el.style.transform = 'translateX(0px) rotate(0deg)';
-    }
+  open(q: Quedada) {
+    this.router.navigate(['/quedadas', q.id]);
   }
 
-  apuntarse(q: Quedada) {
-    // asume que tu usuario “yo” ya lo defines en el servicio o viene del Auth
-    this.qSrv.join(q.id, 'yo').subscribe();
-  }
-
-  ionViewWillEnter(): void {
-    this.el.nativeElement.removeAttribute('inert');
-  }
-  ionViewWillLeave(): void {
-    (document.activeElement as HTMLElement | null)?.blur();
-    this.el.nativeElement.setAttribute('inert', '');
+  doRefresh(event: any) {
+    this.qSrv.loadAll().pipe(takeUntil(this.destroy$)).subscribe({
+      complete: () => event.target.complete()
+    });
   }
 }

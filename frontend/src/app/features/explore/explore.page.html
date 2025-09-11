@@ -1,34 +1,79 @@
-<ion-header><ion-toolbar><ion-title>Explorar</ion-title></ion-toolbar></ion-header>
+<ion-header>
+  <!-- Título -->
+  <ion-toolbar>
+    <ion-title>Explorar</ion-title>
+  </ion-toolbar>
 
-<ion-content>
-  <ion-segment value="posts" (ionChange)="segmentChanged($event)">
-    <ion-segment-button value="posts"><ion-label>Publicaciones</ion-label></ion-segment-button>
-    <ion-segment-button value="people"><ion-label>Gente</ion-label></ion-segment-button>
-  </ion-segment>
+  <!-- Segmento -->
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="tab" (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="posts">PUBLICACIONES</ion-segment-button>
+      <ion-segment-button value="people">GENTE</ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
 
-  <ng-container *ngIf="tab==='posts'">
-    <ion-list *ngIf="posts?.length; else noPosts">
-      <ion-item *ngFor="let p of posts">
-        <ion-avatar slot="start"><img [src]="p.user.avatarUrl || 'assets/avatar.svg'"></ion-avatar>
-        <ion-label>
-          <h2>{{ p.user.name }}</h2>
-          <p>{{ p.caption }}</p>
-        </ion-label>
-      </ion-item>
-    </ion-list>
-    <ng-template #noPosts><div class="ion-padding ion-text-center">No hay publicaciones.</div></ng-template>
+  <!-- Buscador SOLO cuando estamos en GENTE -->
+  <ion-toolbar *ngIf="tab === 'people'">
+    <ion-searchbar
+      placeholder="Buscar usuarios"
+      [debounce]="300"
+      [(ngModel)]="searchText"
+      (ionInput)="onSearch($event)">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- POSTS -->
+  <ng-container *ngIf="tab === 'posts'">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="4" *ngFor="let p of posts; trackBy: trackByPost">
+          <div class="square" (click)="openPost(p)">
+            <img [src]="p.imageUrl || '/assets/placeholder.jpg'" alt="" />
+            <div class="overlay">
+              <ion-icon name="heart"></ion-icon>
+              <span>{{ p.likesCount }}</span>
+              <ion-icon name="chatbubble"></ion-icon>
+              <span>{{ p.commentCount }}</span>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <p *ngIf="!loading && posts.length === 0">No hay publicaciones.</p>
+
+    <ion-infinite-scroll *ngIf="hasMorePosts" threshold="200px" (ionInfinite)="loadMorePosts($event)">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando..."></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
   </ng-container>
 
-  <ng-container *ngIf="tab==='people'">
-    <ion-list *ngIf="people?.length; else noPeople">
-      <ion-item *ngFor="let u of people">
-        <ion-avatar slot="start"><img [src]="u.fotoPerfil || 'assets/avatar.svg'"></ion-avatar>
-        <ion-label><h2>{{ u.nombre }}</h2></ion-label>
-        <ion-button slot="end" size="small" [color]="u.following ? 'success':'primary'" (click)="toggleFollow(u)">
+  <!-- PEOPLE -->
+  <ng-container *ngIf="tab === 'people'">
+    <ion-list>
+      <ion-item *ngFor="let u of people; trackBy: trackByUser" (click)="openProfile(u)">
+        <ion-avatar slot="start">
+          <img [src]="u.fotoPerfil || '/assets/avatar.svg'">
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ u.nombre }}</h2>
+          <p>{{ u.ciudad }} · {{ u.nivelEscalada || '—' }}</p>
+        </ion-label>
+        <ion-button fill="outline" size="small" (click)="toggleFollow(u, $event)">
           {{ u.following ? 'Siguiendo' : 'Seguir' }}
         </ion-button>
       </ion-item>
     </ion-list>
-    <ng-template #noPeople><div class="ion-padding ion-text-center">No hay sugerencias aún.</div></ng-template>
+
+    <ion-infinite-scroll *ngIf="hasMorePeople" threshold="200px" (ionInfinite)="loadMorePeople($event)">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando..."></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
+    <!-- Mensajes vacíos -->
+    <p *ngIf="!loading && people.length === 0 && !searchText">No hay sugerencias por ahora.</p>
+    <p *ngIf="!loading && people.length === 0 && searchText">Sin resultados para “{{ searchText }}”.</p>
   </ng-container>
+
 </ion-content>

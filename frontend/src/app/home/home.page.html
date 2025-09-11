@@ -1,52 +1,102 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Feed</ion-title>
+    <ion-title>Home</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button
+        fill="clear"
+        [routerLink]="['/chats']"
+        routerDirection="forward"
+        aria-label="Abrir chats">
+        <ion-icon slot="icon-only" name="chatbubble-ellipses-outline"></ion-icon>
+        <ion-badge *ngIf="unreadCount > 0" class="chat-badge">{{ unreadCount }}</ion-badge>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<!-- IMPORTANTE: el FAB debe ir DENTRO de ion-content -->
 <ion-content class="feed-container">
-  <!-- Lista de posts -->
-  <ng-container *ngIf="posts?.length; else empty">
+  <!-- LISTA DE POSTS -->
+  <ng-container *ngIf="posts && posts.length > 0; else empty">
     <ion-card *ngFor="let post of posts" class="post-card">
+
+      <!-- Cabecera -->
       <ion-item lines="none" class="card-header">
         <ion-avatar slot="start">
           <img [src]="post.user.avatarUrl || 'assets/avatar.svg'" />
         </ion-avatar>
+
         <ion-label>
           <h2>{{ post.user.name }}</h2>
         </ion-label>
+
+        <!-- Menú (tres puntos) -->
         <ion-button fill="clear" slot="end" (click)="openMenu(post)">
           <ion-icon name="ellipsis-horizontal"></ion-icon>
         </ion-button>
+
+        <!-- Seguir / Siguiendo (oculto si soy yo) -->
         <ion-button
+          *ngIf="post.user.userId !== meId"
           fill="clear"
           size="small"
           slot="end"
           (click)="toggleFollow(post.user.userId)"
-          [color]="post.user.following ? 'success' : 'primary'"
-        >
+          [color]="post.user.following ? 'success' : 'primary'">
           {{ post.user.following ? 'Siguiendo' : 'Seguir' }}
         </ion-button>
       </ion-item>
 
+      <!-- Imagen -->
       <div class="card-image">
-        <img [src]="post.imageUrl" />
+        <img [src]="post.imageUrl || 'assets/placeholder.jpg'" />
       </div>
 
+      <!-- Acciones -->
+      <div class="action-row">
+        <button class="action-btn" [class.liked]="post.liked" (click)="toggleLike(post)" aria-label="Me gusta">
+          <ion-icon [name]="post.liked ? 'heart' : 'heart-outline'"></ion-icon>
+          <span class="icon-label">{{ post.likesCount || 0 }}</span>
+        </button>
+
+        <button class="action-btn" (click)="openComments(post)" aria-label="Comentarios">
+          <ion-icon name="chatbubble-outline"></ion-icon>
+          <span class="icon-label">{{ post.comments.length }}</span>
+        </button>
+
+        <button class="action-btn bookmark" [class.saved]="post.saved" (click)="toggleSave(post)" aria-label="Guardar">
+          <ion-icon [name]="post.saved ? 'bookmark' : 'bookmark-outline'"></ion-icon>
+        </button>
+      </div>
+
+      <!-- Texto + comentarios -->
       <ion-card-content>
-        <p class="likes">{{ post.likesCount }} me gusta</p>
+        <p class="likes">{{ post.likesCount || 0 }} me gusta</p>
+
         <p class="caption">
           <strong>{{ post.user.name }}</strong> {{ post.caption }}
         </p>
 
+        <!-- Últimos 3 comentarios -->
+        <div class="comments-list" *ngIf="post.comments.length">
+          <div class="comment" *ngFor="let c of post.comments | slice:-3">
+            <span class="author">{{ nameFromComment(c) }}</span>
+            <span class="text">{{ c.text }}</span>
+          </div>
+        </div>
+
+        <!-- Nuevo comentario -->
         <div class="new-comment">
           <ion-input
+            fill="outline"
+            [counter]="true"
+            maxlength="240"
             placeholder="Añadir un comentario…"
-            [(ngModel)]="newComment[post.id]"
-            (keydown.enter)="addComment(post)"
-          >
+            [ngModel]="newComment[post.id] || ''"
+            (ngModelChange)="newComment[post.id] = $any($event)"
+            (keydown.enter)="addComment(post)">
           </ion-input>
+
           <ion-button fill="clear" class="send-btn" (click)="addComment(post)">
             <ion-icon name="send-outline"></ion-icon>
           </ion-button>
@@ -68,10 +118,7 @@
     </div>
   </ng-template>
 
-  <!-- FAB estilo Instagram -->
-  <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button aria-label="Crear" (click)="openCreate()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+<button class="fab-plus" (click)="openCreate()" aria-label="Crear publicación">
+  <ion-icon name="add"></ion-icon>
+</button>
 </ion-content>

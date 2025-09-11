@@ -1,21 +1,24 @@
+/* Barra inferior */
 .bottom-nav {
   ion-toolbar {
     --background: #fff;
     --border-color: rgba(0,0,0,.08);
     --border-width: 1px 0 0 0;
+    --min-height: 56px;
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
+
 .tabs {
   height: 56px;
   display: grid;
-  grid-template-columns: 1fr 1fr auto 1fr 1fr;
+  grid-template-columns: repeat(5, 1fr);
   align-items: center;
-  gap: 6px;
+  justify-items: center;
 }
 
-/* botón base (no enlaces, así evitamos subrayados/morado) */
+/* Botón/pestaña (igual que antes) */
 .tab {
   border: 0;
   background: transparent;
@@ -27,22 +30,12 @@
   padding: 4px 0 0;
   font-size: 11px;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .tab ion-icon { font-size: 22px; margin-bottom: 2px; }
 .tab.active   { color: var(--ion-color-primary); }
+.tab:active   { opacity: .7; }
 
-/* “+” centrado, estilo Instagram */
-.central {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #fff;
-  margin-top: -16px;
-  box-shadow: 0 8px 18px rgba(0,0,0,.14);
-  display: flex; align-items: center; justify-content: center;
-}
-.central ion-icon { font-size: 24px; color: var(--ion-color-primary); margin: 0; }
-
-/* efecto toque */
-.tab:active { opacity: .7; }
+/* por si aún quedaba algo del FAB antiguo */
+.fab-center, ion-fab { display: none !important; }

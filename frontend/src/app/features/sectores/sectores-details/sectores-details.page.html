@@ -15,6 +15,12 @@
     </div>
   </ion-toolbar>
 </ion-header>
+<ion-button expand="block"
+            color="primary"
+            [routerLink]="['/quedadas/create']"
+            [queryParams]="{ sectorId: sector?.id, sectorNombre: sector?.nombre }">
+  Crear quedada en este sector
+</ion-button>
 
 <ion-content #content [class.scrolled]="scrolled">
   <!-- Contenedor que muestra el contenido solo cuando sector existe -->

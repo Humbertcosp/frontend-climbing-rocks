@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
-import { CreatePostModal } from './features/posts/create-post.modal';
+import { CreatePostModal } from './features/posts/create-post.modal/create-post.modal';
+
 
 @Component({
   selector: 'app-root',

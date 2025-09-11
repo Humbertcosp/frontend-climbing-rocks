@@ -34,13 +34,12 @@
     <!-- Fallback web -->
     <label class="file-fallback">
       <ion-icon name="cloud-upload-outline"></ion-icon>
-      <input #fileInput type="file" accept="image/*" capture="environment" (change)="pickFromFile($event)">
+      <input #fileInput type="file" accept="image/*" (change)="pickFromFile($event)">
     </label>
   </div>
 
   <!-- FORM -->
   <form [formGroup]="form" (ngSubmit)="submit()">
-
     <ion-item fill="outline" class="field">
       <ion-textarea
         label="Descripción"

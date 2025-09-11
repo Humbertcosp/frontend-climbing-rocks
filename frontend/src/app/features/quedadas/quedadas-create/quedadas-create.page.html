@@ -1,42 +1,115 @@
-<!-- quedadas-create.page.html -->
 <ion-header>
   <ion-toolbar>
-    <ion-back-button slot="start"></ion-back-button>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/quedadas"></ion-back-button>
+    </ion-buttons>
     <ion-title>Nueva Quedada</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <form [formGroup]="fg" (ngSubmit)="onSubmit()">
-    <ion-item>
+<ion-content [fullscreen]="true" class="ion-padding">
+
+  <!-- Tarjeta del formulario -->
+  <ion-list inset="true" class="form-card" [formGroup]="fg">
+
+    <div class="section-title">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <span>Detalles</span>
+    </div>
+
+    <!-- Sector -->
+    <ion-item class="field" lines="full">
+      <ion-icon name="map-outline" slot="start"></ion-icon>
       <ion-label position="stacked">Sector</ion-label>
-      <ion-select formControlName="sectorId">
-        <ion-select-option *ngFor="let s of sectores" [value]="s.id">
+      <ion-select formControlName="sectorId"
+                  interface="popover"
+                  placeholder="Selecciona un sector">
+        <ion-select-option *ngFor="let s of sectores; trackBy: trackById"
+                           [value]="s.id">
           {{ s.nombre }}
         </ion-select-option>
       </ion-select>
     </ion-item>
 
-    <ion-item>
+    <!-- Título -->
+    <ion-item class="field" lines="full">
+      <ion-icon name="chatbubbles-outline" slot="start"></ion-icon>
       <ion-label position="stacked">Título</ion-label>
-      <ion-input formControlName="titulo"></ion-input>
+      <ion-input formControlName="titulo" placeholder="Ej. Quedada mañanera"></ion-input>
     </ion-item>
 
-    <ion-item>
-      <ion-label position="stacked">Fecha</ion-label>
-      <ion-datetime formControlName="fecha" displayFormat="DD MMM YYYY"></ion-datetime>
+   <div class="section-title">
+  <ion-icon name="calendar-outline"></ion-icon>
+  <span>Cuándo</span>
+</div>
+
+<!-- FECHA: ítem pequeño que abre un popover -->
+<ion-item class="field" id="fechaTrigger" button detail>
+  <ion-icon name="calendar-outline" slot="start"></ion-icon>
+  <ion-label>Fecha</ion-label>
+  <ion-note slot="end">
+    {{ fg.value.fecha ? (fg.value.fecha | date:'d MMM y') : 'Selecciona' }}
+  </ion-note>
+</ion-item>
+
+<ion-popover trigger="fechaTrigger" [dismissOnSelect]="true" alignment="center">
+  <ng-template>
+    <ion-datetime
+      class="dt-compact"
+      presentation="date"
+      locale="es-ES"
+      [firstDayOfWeek]="1"
+      [min]="minDate"
+      (ionChange)="onFechaChange($event)">
+    </ion-datetime>
+  </ng-template>
+</ion-popover>
+
+<!-- HORA: ítem pequeño que abre un popover -->
+<ion-item class="field" id="horaTrigger" button detail>
+  <ion-icon name="time-outline" slot="start"></ion-icon>
+  <ion-label>Hora</ion-label>
+  <ion-note slot="end">
+    {{ fg.value.hora || 'Selecciona' }}
+  </ion-note>
+</ion-item>
+
+<ion-popover trigger="horaTrigger" [dismissOnSelect]="true" alignment="center">
+  <ng-template>
+    <ion-datetime
+      class="dt-compact"
+      presentation="time"
+      hourCycle="h23"
+      preferWheel="true"
+      minuteValues="0,15,30,45"
+      (ionChange)="onHoraChange($event)">
+    </ion-datetime>
+  </ng-template>
+</ion-popover>
+
+
+    <div class="section-title">
+      <ion-icon name="document-text-outline"></ion-icon>
+      <span>Notas</span>
+    </div>
+
+    <ion-item class="field" lines="none">
+      <ion-textarea formControlName="descripcion"
+                    autoGrow="true"
+                    placeholder="Plan, material, punto de encuentro…"></ion-textarea>
     </ion-item>
 
-    <ion-item>
-      <ion-label position="stacked">Hora</ion-label>
-      <ion-datetime formControlName="hora" displayFormat="HH:mm" pickerFormat="HH:mm"></ion-datetime>
-    </ion-item>
+    <ion-note color="medium" class="hint">
+      Consejo: fija la fecha y la hora y después ajusta los detalles.
+    </ion-note>
 
-    <ion-item>
-      <ion-label position="stacked">Notas</ion-label>
-      <ion-textarea formControlName="notas"></ion-textarea>
-    </ion-item>
+  </ion-list>
 
-    <ion-button type="submit" [disabled]="fg.invalid">Crear</ion-button>
-  </form>
+  <!-- CTA inferior grande -->
+  <div class="sticky-cta">
+    <ion-button expand="block" size="large" shape="round" [disabled]="fg.invalid" (click)="onSubmit()">
+      <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+      Crear quedada
+    </ion-button>
+  </div>
 </ion-content>
