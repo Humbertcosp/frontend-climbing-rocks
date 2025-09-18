@@ -15,7 +15,8 @@ import { AuthService } from '../services/auth.service';
 
 import { Usuario } from '../features/models/usuario.model';
 import { Post } from '../features/models/post.model';
-import { CreatePostModal } from '../features/posts/create-post.modal/create-post.modal'; 
+import { CreatePostModal } from '../features/posts/create-post.modal/create-post.modal';
+import { EditPostModal } from '../features/posts/edit-post-modal/edit-post-modal';
 
 import { of } from 'rxjs';
 import { switchMap, catchError, finalize } from 'rxjs/operators';
@@ -63,28 +64,44 @@ private getUserNameLoose(u: any): string {
     this.loadUsers();
     this.loadPosts();
   }
+  canEdit(post: Post): boolean {
+  return !!this.meId && String(post.user?.userId) === String(this.meId);
+}
+
+async openEdit(post: Post) {
+  const modal = await this.modalCtrl.create({
+    component: EditPostModal,
+    componentProps: { post }
+  });
+  await modal.present();
+
+  const { data, role } = await modal.onWillDismiss();
+  if (role === 'updated' && data) {
+    const i = this.posts.findIndex(p => p.id === data.id);
+    if (i > -1) this.posts[i] = data;      // refresca el feed local
+    (await this.toast.create({ message: 'Publicación actualizada', duration: 1200 }))
+      .present();
+  }
+}
 
   // ───────────────────────────────────
   // FEED
   // ───────────────────────────────────
   loadPosts() {
-    this.loadingPosts = true;
-    this.postService
-      .listFollowing()
-      .pipe(
-        // si viene vacío, pedimos todos
-        switchMap((list) =>
-          list && list.length ? of(list) : this.postService.getPosts()
-        ),
-        // si falla feed/following, caemos a getPosts
-        catchError((err) => {
-          console.error('feed/following error -> fallback a getPosts()', err);
-          return this.postService.getPosts();
-        }),
-        finalize(() => (this.loadingPosts = false))
-      )
-      .subscribe((posts) => (this.posts = posts));
-  }
+  this.loadingPosts = true;
+  this.postService.getPosts()
+    .pipe(
+      catchError(err => {
+        console.error('[feed] getPosts() error', err);
+        return of([] as Post[]);
+      }),
+      finalize(() => (this.loadingPosts = false))
+    )
+    .subscribe(posts => {
+      console.log('[feed] posts recibidos:', posts);
+      this.posts = Array.isArray(posts) ? posts : [];
+    });
+}
 
   // ───────────────────────────────────
   // CREAR POST
@@ -190,54 +207,39 @@ addComment(post: Post) {
   // ───────────────────────────────────
   // MENÚ (tres puntos)
   // ───────────────────────────────────
-  async openMenu(post: Post) {
-    const mine = !!(post.user?.userId && post.user.userId === this.meId);
-    const following = !!post.user?.following;
+ async openMenu(post: Post) {
+  const mine = this.canEdit(post);
+  const following = !!post.user?.following;
 
-    const buttons: any[] = [];
-
-    if (mine) {
-      buttons.push(
-        {
-          text: 'Editar publicación',
-          icon: 'create-outline',
-          handler: () => this.router.navigate(['/post', post.id, 'edit']),
-        },
-        {
-          text: 'Eliminar',
-          role: 'destructive',
-          icon: 'trash-outline',
-          handler: () => this.confirmDelete(post),
-        }
-      );
-    } else {
-      buttons.push(
-        {
-          text: following ? 'Dejar de seguir' : 'Seguir',
+  const buttons = mine
+    ? [
+        { text: 'Editar publicación', icon: 'create-outline', data: { action: 'edit' } },
+        { text: 'Eliminar', role: 'destructive', icon: 'trash-outline', data: { action: 'delete' } },
+        { text: 'Cancelar', role: 'cancel', icon: 'close' }
+      ]
+    : [
+        { text: following ? 'Dejar de seguir' : 'Seguir',
           icon: following ? 'person-remove-outline' : 'person-add-outline',
-          handler: () => this.toggleFollow(post.user?.userId!),
-        },
-        {
-          text: 'Enviar mensaje',
-          icon: 'mail-outline',
-          handler: () => this.goToChat(post.user?.userId!),
-        },
-        {
-          text: 'Reportar',
-          icon: 'alert-circle-outline',
-          handler: () => this.report(post),
-        }
-      );
-    }
+          data: { action: 'follow' } },
+        { text: 'Enviar mensaje', icon: 'mail-outline', data: { action: 'dm' } },
+        { text: 'Reportar', icon: 'alert-circle-outline', data: { action: 'report' } },
+        { text: 'Cancelar', role: 'cancel', icon: 'close' }
+      ];
 
-    buttons.push({ text: 'Cancelar', role: 'cancel', icon: 'close' });
+  const sheet = await this.actionSheet.create({ header: 'Opciones', buttons });
+  await sheet.present();
 
-    const sheet = await this.actionSheet.create({
-      header: 'Opciones',
-      buttons,
-    });
-    await sheet.present();
+  const { data } = await sheet.onDidDismiss();
+  switch (data?.action) {
+    case 'edit':   return this.openEdit(post);
+    case 'delete': return this.confirmDelete(post);
+    case 'follow': return this.toggleFollow(post.user?.userId!);
+    case 'dm':     return this.goToChat(post.user?.userId!);
+    case 'report': return this.report(post);
+    default:       return;
   }
+}
+
 
   private async confirmDelete(post: Post) {
     const alert = await this.alertCtrl.create({

@@ -1,33 +1,39 @@
-import { Via } from '../models/via.model';
+// SOLO FRONTEND: interfaz TS (sin mongoose)
 
 export interface Sector {
-  id: string;
-  nombre: string;
-  provincia?: string;
-  gradoMin?: string;
-  gradoMax?: string;
-  aproximacion?: string;
-  descripcion?: string;
-  fotos?: string[];       // ¡la primera será imageUrl en la lista!
-  imageUrl?: string;      // atajo para la foto principal
+  id: string;                       // mapea _id -> id en el servicio
+  nombre: string;                   // mapea name|nombre -> nombre
+  imageUrl?: string;                // para la tarjeta (puede venir vacío)
+
+  area?: string;
+  country?: string;
+  region?: string;
+  location?: { type: 'Point'; coordinates: [number, number] };
+    
   lat?: number;
-  lng?: number;
-  lon?: number;   // longitud en grados decimales
+  lon?: number;
   parkingLat?: number;
   parkingLon?: number;
-}
+  approachMin?: number;
+  vias?: number;
 
+  rock?: string;
+  styles?: string[];
+  orientation?: string[];
+  season?: string[];
+  shade?: string[];
+  approach_min?: number;
+  family_friendly?: boolean;
+  rain_proof?: boolean;
+  routes?: number;
+  grade_min?: string;
+  grade_max?: string;
+  description_md?: string;
 
-export type Orientacion = 'Mañana' | 'Tarde' | 'Todo el día' | 'Sombra';
-
-export interface Sector {
-  id: string;
-  nombre: string;
-  foto: string;        // url local o remota
-  tipoRoca: 'Limestone' | 'Granite' | 'Slate' | 'Sandstone';
-  orientacion: Orientacion;
-  minAltura: number;
-  maxAltura: number;
-  vias: Via[];
-  mesesBuenos: ('E'|'F'|'M'|'A'|'MAY'|'J'|'JL'|'A'|'S'|'O'|'N'|'D')[];
+  source?: string;
+  source_url?: string;
+  license?: string;
+  last_scraped_at?: string | Date;
+  last_ai_enriched_at?: string | Date;
+  status?: 'draft' | 'review' | 'published';
 }

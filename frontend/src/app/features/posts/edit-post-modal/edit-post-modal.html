@@ -1,3 +1,4 @@
+<!-- src/app/features/posts/edit-post-modal/edit-post-modal.html -->
 <ion-header>
   <ion-toolbar>
     <ion-title>Editar publicación</ion-title>
@@ -8,13 +9,30 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form [formGroup]="form" (ngSubmit)="save()">
+  <div class="image-area">
+    <ng-container *ngIf="preview; else noimg">
+      <img [src]="preview" alt="preview">
+      <ion-button size="small" fill="outline" (click)="clearImage()">
+        Quitar imagen
+      </ion-button>
+    </ng-container>
+    <ng-template #noimg>
+      <div class="noimg">Sin imagen</div>
+    </ng-template>
+
+    <ion-button size="small" fill="outline">
+      <input type="file" accept="image/*" (change)="onFileChange($event)" style="opacity:0;position:absolute;inset:0;">
+      Cambiar imagen
+    </ion-button>
+  </div>
+
+  <form [formGroup]="form">
     <ion-item fill="outline" class="field">
       <ion-textarea
         label="Descripción"
         label-placement="stacked"
-        autoGrow="true"
-        formControlName="texto">
+        formControlName="texto"
+        autoGrow="true">
       </ion-textarea>
     </ion-item>
 
@@ -30,7 +48,7 @@
       <ion-input label="Ubicación" label-placement="stacked" formControlName="ubicacion"></ion-input>
     </ion-item>
 
-    <ion-button expand="block" type="submit" [disabled]="form.invalid || loading">
+    <ion-button expand="block" (click)="save()" [disabled]="loading || form.invalid">
       <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
       <span *ngIf="!loading">Guardar</span>
     </ion-button>

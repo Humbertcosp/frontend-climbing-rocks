@@ -35,7 +35,7 @@ export class QuedadasCreatePage implements OnInit {
       descripcion: ['']
     });
 
-    this.sSrv.getAll().subscribe((secs: Sector[]) => this.sectores = secs);
+    this.sSrv.list().subscribe((secs: Sector[]) => this.sectores = secs);
   }
 
   trackById = (_: number, s: Sector) => s.id;
