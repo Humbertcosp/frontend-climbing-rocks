@@ -72,7 +72,7 @@ Endpoints: autenticación, sectores, quedadas, imágenes.
 ✉️ Contacto
 Humbert Ch. — Full Stack Developer
 GitHub: https://github.com/Humbertcosp
-LinkedIn: (tu enlace aquí)
+LinkedIn: https://www.linkedin.com/in/humbert-c-a12956184/
 ```
 ``` ├── assets/           # Imágenes y recursos
  └── environments/     # Configuración (sin claves)
